@@ -53,6 +53,43 @@
   .float { animation: floaty 3s ease-in-out infinite; }
   .navbtn { cursor:pointer; transition: background var(--dur-fast) var(--ease-out); }
   input:focus { outline: 2px solid var(--snap-blue); }
+  .shell { max-width:1180px; margin:0 auto; padding-left:32px; padding-right:32px; }
+  .home-hero { display:flex; gap:28px; align-items:center; padding:48px 0 8px; }
+  .daily-photo { width:280px; height:210px; border-radius:24px; background:#fff; display:flex; align-items:center; justify-content:center; flex:0 0 auto; box-shadow:var(--shadow-sm); overflow:hidden; }
+  .bird-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; }
+  .detail-hero { display:flex; gap:32px; margin-top:24px; align-items:stretch; flex-wrap:wrap; }
+  .info-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:28px; }
+  .article-wrap { display:flex; gap:32px; margin-top:40px; flex-wrap:wrap; }
+  .photo-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  .lightbox-stage { position:relative; max-width:min(980px,94vw); max-height:92vh; display:flex; flex-direction:column; gap:12px; }
+  .lightbox-nav { position:absolute; top:50%; transform:translateY(-50%); z-index:2; width:46px; height:46px; border-radius:50%; border:0; background:#fff; color:#0f2d35; display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-sm); }
+  .lightbox-nav:active { transform:translateY(-50%) !important; }
+  .lightbox-prev { left:18px; }
+  .lightbox-next { right:18px; }
+  @media (max-width: 900px) {
+    .shell { padding-left:20px !important; padding-right:20px !important; }
+    .home-hero { flex-direction:column; align-items:stretch; padding-top:30px !important; }
+    .daily-photo { width:100% !important; height:auto !important; aspect-ratio:4 / 3; }
+    .bird-grid { grid-template-columns:repeat(2, minmax(0, 1fr)) !important; }
+    .info-grid { grid-template-columns:1fr !important; }
+    .photo-grid { grid-template-columns:1fr !important; }
+    .detail-hero > div, .article-wrap > div { min-width:0 !important; }
+  }
+  @media (max-width: 560px) {
+    h1 { font-size:42px !important; }
+    .shell { padding-left:16px !important; padding-right:16px !important; }
+    .topbar { flex-direction:column; align-items:flex-start !important; gap:12px; padding-top:12px !important; padding-bottom:12px !important; }
+    .topbar > div:last-child { flex-wrap:wrap; }
+    .home-hero p { max-width:100% !important; }
+    .bird-grid { grid-template-columns:1fr !important; }
+    .detail-hero { gap:18px !important; }
+    .detail-hero > div, .article-wrap > div { flex-basis:100% !important; }
+    .sound-card { flex-direction:column; align-items:stretch !important; }
+    .lightbox-nav { width:40px; height:40px; top:auto; bottom:76px; transform:none; }
+    .lightbox-nav:active { transform:none !important; }
+    .lightbox-prev { left:calc(50% - 52px); }
+    .lightbox-next { right:calc(50% - 52px); }
+  }
 </style>
 </helmet>
 
@@ -60,7 +97,7 @@
 
   <!-- ============ NAV ============ -->
   <div style="position:sticky;top:0;z-index:50;background:rgba(247,252,248,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);">
-    <div style="max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 32px;">
+    <div class="topbar shell" style="max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 32px;">
       <div class="navbtn" onClick="{{ goHome }}" style="display:flex;align-items:center;gap:10px;cursor:pointer;">
         <span style="font:var(--h5);letter-spacing:var(--track-tight);">{{ siteName }}</span>
       </div>
@@ -74,8 +111,8 @@
 
   <!-- ============ BIRDS GALLERY ============ -->
   <sc-if value="{{ isBirds }}" hint-placeholder-val="{{ true }}">
-    <div style="max-width:1180px;margin:0 auto;padding:0 32px 72px;">
-      <div style="display:flex;gap:28px;align-items:center;padding:48px 0 8px;">
+    <div class="shell" style="max-width:1180px;margin:0 auto;padding:0 32px 72px;">
+      <div class="home-hero" style="display:flex;gap:28px;align-items:center;padding:48px 0 8px;">
         <div style="flex:1;">
           <div class="eyebrow">San Francisco Bay Area</div>
           <h1 style="font:var(--h1);margin:8px 0 12px;">Meet the birds<br>of the Bay</h1>
@@ -85,7 +122,7 @@
             <input value="{{ query }}" onInput="{{ onQuery }}" placeholder="Search by name…" style="border:0;outline:0;background:transparent;font:var(--p);flex:1;color:var(--fg);"/>
           </div>
         </div>
-        <div style="width:280px;height:210px;border-radius:24px;background:#fff;display:flex;align-items:center;justify-content:center;flex:0 0 auto;box-shadow:var(--shadow-sm);overflow:hidden;">
+        <div class="daily-photo" style="width:280px;height:210px;border-radius:24px;background:#fff;display:flex;align-items:center;justify-content:center;flex:0 0 auto;box-shadow:var(--shadow-sm);overflow:hidden;">
           <img src="{{ dailyHero.src }}" alt="{{ dailyHero.caption }}" style="width:100%;height:100%;object-fit:contain;display:block;">
         </div>
       </div>
@@ -97,7 +134,7 @@
       </div>
 
       <sc-if value="{{ hasResults }}" hint-placeholder-val="{{ true }}">
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;">
+        <div class="bird-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;">
           <sc-for list="{{ shown }}" as="b" hint-placeholder-count="8">
             <div class="bcard" onClick="{{ b.onOpen }}" style="background:#fff;border-radius:18px;overflow:hidden;box-shadow:var(--shadow-sm);">
               <div style="height:150px;background:{{ b.tint }};position:relative;overflow:hidden;">
@@ -137,13 +174,13 @@
 
   <!-- ============ SPECIES DETAIL ============ -->
   <sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}">
-    <div style="max-width:1000px;margin:0 auto;padding:28px 32px 80px;">
+    <div class="shell" style="max-width:1000px;margin:0 auto;padding:28px 32px 80px;">
       <span class="navbtn btn" onClick="{{ goHome }}" style="display:inline-flex;align-items:center;gap:6px;font:var(--p-sm);font-weight:600;color:var(--fg-muted);padding:8px 14px;border-radius:999px;background:#fff;border:1px solid var(--border);cursor:pointer;">
         <i data-lucide="arrow-left" style="width:16px;height:16px;"></i> All birds
       </span>
 
       <!-- hero -->
-      <div style="display:flex;gap:32px;margin-top:24px;align-items:stretch;flex-wrap:wrap;">
+      <div class="detail-hero" style="display:flex;gap:32px;margin-top:24px;align-items:stretch;flex-wrap:wrap;">
         <div style="flex:1 1 380px;min-width:320px;border-radius:24px;overflow:hidden;box-shadow:var(--shadow-sm);position:relative;min-height:300px;background:{{ d.tint }};">
           <image-slot id="{{ d.mainPhotoId }}" shape="rect" fit="contain" src="{{ d.mainPhotoSrc }}" placeholder="{{ d.mainPhotoPlaceholder }}"></image-slot>
         </div>
@@ -157,7 +194,7 @@
       </div>
 
       <!-- key info boxes -->
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:28px;">
+      <div class="info-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:28px;">
         <div style="background:#fff;border-radius:16px;padding:22px;box-shadow:var(--shadow-sm);">
           <div style="width:42px;height:42px;border-radius:12px;background:rgba(0,182,255,0.14);display:flex;align-items:center;justify-content:center;margin-bottom:12px;"><i data-lucide="ruler" style="width:22px;height:22px;color:#0090cc;"></i></div>
           <div class="eyebrow">Size</div>
@@ -179,7 +216,7 @@
       </div>
 
       <!-- article + fun fact -->
-      <div style="display:flex;gap:32px;margin-top:40px;flex-wrap:wrap;">
+      <div class="article-wrap" style="display:flex;gap:32px;margin-top:40px;flex-wrap:wrap;">
         <div style="flex:1 1 460px;min-width:300px;">
           <h3 style="margin-bottom:16px;">About the {{ d.name }}</h3>
           <sc-for list="{{ d.article }}" as="para" hint-placeholder-count="3">
@@ -198,7 +235,7 @@
       <!-- photo gallery -->
       <div style="margin-top:44px;">
         <h3 style="margin-bottom:16px;">Photo gallery</h3>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+        <div class="photo-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
           <sc-for list="{{ d.galleryPhotos }}" as="p" hint-placeholder-count="3">
             <div style="border-radius:16px;overflow:hidden;box-shadow:var(--shadow-sm);background:#fff;">
               <div onClick="{{ p.onOpen }}" style="height:180px;background:#fff;position:relative;cursor:zoom-in;">
@@ -213,7 +250,7 @@
       <!-- audio player -->
       <div style="margin-top:44px;">
         <h3 style="margin-bottom:16px;">Sound</h3>
-        <div style="background:#fff;border-radius:20px;padding:22px 24px;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:20px;">
+        <div class="sound-card" style="background:#fff;border-radius:20px;padding:22px 24px;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:20px;">
           <div class="btn" onClick="{{ d.togglePlay }}" style="width:60px;height:60px;border-radius:50%;background:var(--snap-yellow);display:flex;align-items:center;justify-content:center;flex:0 0 auto;box-shadow:var(--shadow-yellow);cursor:pointer;">
             <i data-lucide="{{ d.playIcon }}" style="width:26px;height:26px;color:#000;"></i>
           </div>
@@ -388,12 +425,18 @@
   <!-- ============ PHOTO LIGHTBOX ============ -->
   <sc-if value="{{ hasLightbox }}" hint-placeholder-val="{{ false }}">
     <div class="overlay-bg" onClick="{{ closeLightbox }}" style="position:fixed;inset:0;z-index:120;background:rgba(12,38,44,0.82);display:flex;align-items:center;justify-content:center;padding:28px;">
-      <div onClick="{{ stopClick }}" style="max-width:min(980px,94vw);max-height:92vh;display:flex;flex-direction:column;gap:12px;">
+      <div class="lightbox-stage" onClick="{{ stopClick }}" style="max-width:min(980px,94vw);max-height:92vh;display:flex;flex-direction:column;gap:12px;">
         <button class="btn" type="button" onClick="{{ closeLightbox }}" style="align-self:flex-end;width:42px;height:42px;border-radius:50%;border:0;background:#fff;color:#0f2d35;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-sm);">
           <i data-lucide="x" style="width:22px;height:22px;"></i>
         </button>
+        <button class="btn lightbox-nav lightbox-prev" type="button" onClick="{{ prevLightbox }}">
+          <i data-lucide="chevron-left" style="width:26px;height:26px;"></i>
+        </button>
+        <button class="btn lightbox-nav lightbox-next" type="button" onClick="{{ nextLightbox }}">
+          <i data-lucide="chevron-right" style="width:26px;height:26px;"></i>
+        </button>
         <img src="{{ lightbox.src }}" alt="{{ lightbox.caption }}" style="max-width:100%;max-height:78vh;object-fit:contain;border-radius:18px;background:#fff;box-shadow:var(--shadow-lg);">
-        <div style="align-self:center;background:#fff;color:var(--fg);font:var(--p);font-weight:600;border-radius:999px;padding:10px 18px;box-shadow:var(--shadow-xs);">{{ lightbox.caption }}</div>
+        <div style="align-self:center;background:#fff;color:var(--fg);font:var(--p);font-weight:600;border-radius:999px;padding:10px 18px;box-shadow:var(--shadow-xs);">{{ lightbox.caption }} · {{ lightbox.positionLabel }}</div>
       </div>
     </div>
   </sc-if>
@@ -2501,7 +2544,32 @@ class Component extends DCLogic {
   // ---------- navigation ----------
   nav(page){ this.setState({ page, celebrate:null }); window.scrollTo(0,0); }
   openBird(id){ this.setState({ page:"detail", birdId:id, answers:{}, finished:false, playing:false, celebrate:null }); window.scrollTo(0,0); }
-  openLightbox(photo){ if(photo && photo.src) this.setState({ lightbox: photo }); }
+  normalizeLightboxIndex(index, total){
+    if(!total) return 0;
+    return ((index % total) + total) % total;
+  }
+  openLightbox(photos, index=0){
+    const usablePhotos = (photos || []).filter(p=>p && p.src);
+    if(!usablePhotos.length) return;
+    this.setState({ lightbox: { photos: usablePhotos, index:this.normalizeLightboxIndex(index, usablePhotos.length) } });
+  }
+  lightboxPhoto(){
+    const lb = this.state.lightbox;
+    if(!lb || !lb.photos || !lb.photos.length) return { src:"", caption:"", positionLabel:"" };
+    const index = this.normalizeLightboxIndex(lb.index, lb.photos.length);
+    const photo = lb.photos[index] || {};
+    return { ...photo, positionLabel:`${index + 1} of ${lb.photos.length}` };
+  }
+  stepLightbox(delta){
+    this.setState(prev=>{
+      const lb = prev.lightbox;
+      if(!lb || !lb.photos || !lb.photos.length) return {};
+      const next = this.normalizeLightboxIndex(lb.index + delta, lb.photos.length);
+      return { lightbox: { photos:lb.photos, index:next } };
+    });
+  }
+  prevLightbox(){ this.stepLightbox(-1); }
+  nextLightbox(){ this.stepLightbox(1); }
   closeLightbox(){ this.setState({ lightbox:null }); }
   stopClick(e){ if(e && e.stopPropagation) e.stopPropagation(); }
 
@@ -2675,7 +2743,7 @@ class Component extends DCLogic {
           src: bird.photos && bird.photos[n] ? bird.photos[n].src : "",
           caption: bird.photos && bird.photos[n] ? bird.photos[n].caption : "Add a photo",
           placeholder:"Add a photo",
-          onOpen:()=>this.openLightbox(bird.photos && bird.photos[n] ? bird.photos[n] : null)
+          onOpen:()=>this.openLightbox(bird.photos || [], n)
         })),
         togglePlay:()=>this.toggleAudio(bird.id),
         onAudioPlay:()=>{ this.startAudioClock(bird.id); this.setState({playing:true}); },
@@ -2707,6 +2775,7 @@ class Component extends DCLogic {
       grandText: grand?"You did it! You know every bird of the Bay by heart. You are a true Grandmaster.":"Complete all 25 quizzes with a perfect score to unlock the top badge." };
 
     const celebrateBadges = (this.state.celebrate||[]).map(c=>({ name:c.name, icon:c.icon, req:c.req, circleStyle:c.circleStyle }));
+    const lightbox = this.lightboxPhoto();
 
     return {
       siteName, showFunFacts, navItems, dailyHero,
@@ -2715,8 +2784,9 @@ class Component extends DCLogic {
       query:this.state.query, onQuery:(e)=>this.setState({query:e.target.value}),
       filters, shown, hasResults: shown.length>0, noResults: shown.length===0,
       d, badges,
-      hasLightbox: !!this.state.lightbox, lightbox: this.state.lightbox || { src:"", caption:"" },
+      hasLightbox: !!this.state.lightbox, lightbox,
       closeLightbox:()=>this.closeLightbox(), stopClick:(e)=>this.stopClick(e),
+      prevLightbox:()=>this.prevLightbox(), nextLightbox:()=>this.nextLightbox(),
       hasCelebrate: !!(this.state.celebrate && this.state.celebrate.length), celebrateBadges,
       dismissCelebrate:()=>this.setState({celebrate:null}),
       resetProgress:()=>this.resetProgress(),
