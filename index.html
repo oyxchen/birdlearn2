@@ -14,6 +14,22 @@
 <script src="https://unpkg.com/lucide@latest"></script>
 <script src="./image-slot.js"></script>
 <style>
+  :root {
+    --snap-yellow: #c9f4cf;
+    --snap-pale-yellow: #edfbea;
+    --snap-green: #57b782;
+    --snap-blue: #6bb8df;
+    --snap-off-white: #f7fcf8;
+    --bg: #f7fcf8;
+    --bg-elev: #ffffff;
+    --neutral-50: #f7fcf8;
+    --neutral-100: #e8f4ee;
+    --neutral-200: #cfe4db;
+    --border: #bddad2;
+    --border-strong: #8fbcb4;
+    --accent: #6bb8df;
+    --shadow-yellow: 0 10px 30px rgba(87, 183, 130, 0.28);
+  }
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   a, a:visited { color: inherit; text-decoration: none; }
@@ -36,17 +52,16 @@
   .overlay-bg { animation: fadein var(--dur-base) var(--ease-out) both; }
   .float { animation: floaty 3s ease-in-out infinite; }
   .navbtn { cursor:pointer; transition: background var(--dur-fast) var(--ease-out); }
-  input:focus { outline: 2px solid var(--snap-yellow); }
+  input:focus { outline: 2px solid var(--snap-blue); }
 </style>
 </helmet>
 
-<div style="min-height:100vh;background:var(--bg);font-family:var(--font-body);">
+  <div style="min-height:100vh;background:linear-gradient(180deg,#f7fcf8 0%,#eef9f4 46%,#ffffff 100%);font-family:var(--font-body);">
 
   <!-- ============ NAV ============ -->
-  <div style="position:sticky;top:0;z-index:50;background:rgba(251,251,245,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);">
+  <div style="position:sticky;top:0;z-index:50;background:rgba(247,252,248,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);">
     <div style="max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 32px;">
       <div class="navbtn" onClick="{{ goHome }}" style="display:flex;align-items:center;gap:10px;cursor:pointer;">
-        <span style="font-size:26px;" class="float">🐦</span>
         <span style="font:var(--h5);letter-spacing:var(--track-tight);">{{ siteName }}</span>
       </div>
       <div style="display:flex;gap:6px;align-items:center;">
@@ -70,8 +85,8 @@
             <input value="{{ query }}" onInput="{{ onQuery }}" placeholder="Search by name…" style="border:0;outline:0;background:transparent;font:var(--p);flex:1;color:var(--fg);"/>
           </div>
         </div>
-        <div class="float" style="width:230px;height:180px;border-radius:24px;background:var(--snap-yellow);display:flex;align-items:center;justify-content:center;flex:0 0 auto;box-shadow:var(--shadow-sm);">
-          <span style="font-size:96px;">🦆</span>
+        <div class="float" style="width:230px;height:180px;border-radius:24px;background:linear-gradient(135deg,var(--snap-pale-yellow),#dff4ff);display:flex;align-items:center;justify-content:center;flex:0 0 auto;box-shadow:var(--shadow-sm);overflow:hidden;">
+          <img src="assets/birds/American_Avocet-breeding.webp" alt="American Avocet" style="width:100%;height:100%;object-fit:cover;display:block;">
         </div>
       </div>
 
@@ -85,13 +100,20 @@
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;">
           <sc-for list="{{ shown }}" as="b" hint-placeholder-count="8">
             <div class="bcard" onClick="{{ b.onOpen }}" style="background:#fff;border-radius:18px;overflow:hidden;box-shadow:var(--shadow-sm);">
-              <div style="height:150px;background:{{ b.tint }};display:flex;align-items:flex-start;justify-content:space-between;padding:12px;">
-                <span style="{{ b.statusPill }}">{{ b.status }}</span>
-                <sc-if value="{{ b.done }}" hint-placeholder-val="{{ false }}">
-                  <span style="font:var(--caption);font-weight:700;background:#000;color:var(--snap-yellow);padding:3px 9px;border-radius:999px;">{{ b.doneLabel }}</span>
+              <div style="height:150px;background:{{ b.tint }};position:relative;overflow:hidden;">
+                <sc-if value="{{ b.hasCardPhoto }}" hint-placeholder-val="{{ false }}">
+                  <img src="{{ b.cardPhotoSrc }}" alt="{{ b.name }}" style="width:100%;height:100%;object-fit:cover;display:block;">
                 </sc-if>
+                <sc-if value="{{ b.noCardPhoto }}" hint-placeholder-val="{{ true }}">
+                  <div style="height:100%;display:flex;align-items:center;justify-content:center;font:var(--caption);font-weight:700;color:var(--fg-muted);">Photo coming soon</div>
+                </sc-if>
+                <div style="position:absolute;inset:12px 12px auto 12px;display:flex;align-items:flex-start;justify-content:space-between;">
+                  <span style="{{ b.statusPill }}">{{ b.status }}</span>
+                  <sc-if value="{{ b.done }}" hint-placeholder-val="{{ false }}">
+                    <span style="font:var(--caption);font-weight:700;background:#0f2d35;color:#fff;padding:3px 9px;border-radius:999px;">{{ b.doneLabel }}</span>
+                  </sc-if>
+                </div>
               </div>
-              <div style="height:0;text-align:center;transform:translateY(-92px);pointer-events:none;"><span style="font-size:60px;">{{ b.emoji }}</span></div>
               <div style="padding:8px 16px 18px;">
                 <div style="font:var(--h6);letter-spacing:var(--track-tight);">{{ b.name }}</div>
                 <div style="font:var(--caption);color:var(--fg-muted);font-style:italic;margin:2px 0 10px;">{{ b.sci }}</div>
@@ -123,7 +145,7 @@
       <!-- hero -->
       <div style="display:flex;gap:32px;margin-top:24px;align-items:stretch;flex-wrap:wrap;">
         <div style="flex:1 1 380px;min-width:320px;border-radius:24px;overflow:hidden;box-shadow:var(--shadow-sm);position:relative;min-height:300px;background:{{ d.tint }};">
-          <image-slot id="{{ d.mainPhotoId }}" shape="rect" placeholder="{{ d.mainPhotoPlaceholder }}"></image-slot>
+          <image-slot id="{{ d.mainPhotoId }}" shape="rect" src="{{ d.mainPhotoSrc }}" placeholder="{{ d.mainPhotoPlaceholder }}"></image-slot>
         </div>
         <div style="flex:1 1 360px;min-width:300px;display:flex;flex-direction:column;justify-content:center;">
           <div class="eyebrow">{{ d.groupLabel }}</div>
@@ -178,8 +200,11 @@
         <h3 style="margin-bottom:16px;">Photo gallery</h3>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
           <sc-for list="{{ d.galleryPhotos }}" as="p" hint-placeholder-count="3">
-            <div style="border-radius:16px;overflow:hidden;box-shadow:var(--shadow-sm);height:180px;background:{{ d.tint }};position:relative;">
-              <image-slot id="{{ p.id }}" shape="rect" placeholder="{{ p.placeholder }}"></image-slot>
+            <div style="border-radius:16px;overflow:hidden;box-shadow:var(--shadow-sm);background:#fff;">
+              <div onClick="{{ p.onOpen }}" style="height:180px;background:{{ d.tint }};position:relative;cursor:zoom-in;">
+                <image-slot id="{{ p.id }}" shape="rect" src="{{ p.src }}" placeholder="{{ p.placeholder }}"></image-slot>
+              </div>
+              <div style="font:var(--caption);color:var(--fg-muted);padding:10px 12px;">{{ p.caption }}</div>
             </div>
           </sc-for>
         </div>
@@ -200,7 +225,13 @@
             <div style="height:8px;background:var(--neutral-100);border-radius:999px;overflow:hidden;">
               <div style="{{ d.audioProgress }}"></div>
             </div>
-            <div style="font:var(--caption);color:var(--fg-subtle);margin-top:8px;">🔊 Sound placeholder — drop in a recording of the {{ d.name }}’s call.</div>
+            <sc-if value="{{ d.hasAudio }}" hint-placeholder-val="{{ false }}">
+              <audio id="{{ d.audioId }}" controls src="{{ d.audioSrc }}" onPlay="{{ d.onAudioPlay }}" onPause="{{ d.onAudioPause }}" onEnded="{{ d.onAudioPause }}" style="width:100%;margin-top:12px;"></audio>
+              <div style="font:var(--caption);color:var(--fg-subtle);margin-top:8px;">Recorded by {{ d.recordist }}</div>
+            </sc-if>
+            <sc-if value="{{ d.noAudio }}" hint-placeholder-val="{{ true }}">
+              <div style="font:var(--caption);color:var(--fg-subtle);margin-top:8px;">Sound placeholder — drop in a recording of the {{ d.name }}’s call.</div>
+            </sc-if>
           </div>
         </div>
       </div>
@@ -354,6 +385,19 @@
     </div>
   </sc-if>
 
+  <!-- ============ PHOTO LIGHTBOX ============ -->
+  <sc-if value="{{ hasLightbox }}" hint-placeholder-val="{{ false }}">
+    <div class="overlay-bg" onClick="{{ closeLightbox }}" style="position:fixed;inset:0;z-index:120;background:rgba(12,38,44,0.82);display:flex;align-items:center;justify-content:center;padding:28px;">
+      <div onClick="{{ stopClick }}" style="max-width:min(980px,94vw);max-height:92vh;display:flex;flex-direction:column;gap:12px;">
+        <button class="btn" type="button" onClick="{{ closeLightbox }}" style="align-self:flex-end;width:42px;height:42px;border-radius:50%;border:0;background:#fff;color:#0f2d35;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-sm);">
+          <i data-lucide="x" style="width:22px;height:22px;"></i>
+        </button>
+        <img src="{{ lightbox.src }}" alt="{{ lightbox.caption }}" style="max-width:100%;max-height:78vh;object-fit:contain;border-radius:18px;background:#fff;box-shadow:var(--shadow-lg);">
+        <div style="align-self:center;background:#fff;color:var(--fg);font:var(--p);font-weight:600;border-radius:999px;padding:10px 18px;box-shadow:var(--shadow-xs);">{{ lightbox.caption }}</div>
+      </div>
+    </div>
+  </sc-if>
+
   <!-- ============ CELEBRATION OVERLAY ============ -->
   <sc-if value="{{ hasCelebrate }}" hint-placeholder-val="{{ false }}">
     <div class="overlay-bg" onClick="{{ dismissCelebrate }}" style="position:fixed;inset:0;z-index:100;background:rgba(0,0,0,0.55);display:flex;align-items:center;justify-content:center;padding:24px;">
@@ -376,97 +420,1894 @@
 
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1180,&quot;height&quot;:820},&quot;siteName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Bay Birds&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;showFunFacts&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1180,&quot;height&quot;:820},&quot;siteName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;BirdLearn&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;showFunFacts&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
 class Component extends DCLogic {
-  state = { page:'birds', birdId:null, filter:'all', query:'', answers:{}, finished:false, playing:false, celebrate:null, version:0 };
+  state = { page:'birds', birdId:null, filter:'all', query:'', answers:{}, finished:false, playing:false, celebrate:null, lightbox:null, version:0 };
 
   // ---------- data ----------
-  get TINT() { return { water:'rgba(0,182,255,0.16)', raptor:'rgba(201,138,59,0.22)', song:'rgba(57,202,142,0.16)' }; }
-  get GL() { return { water:'Water & shore', raptor:'Raptor', song:'Songbird' }; }
+  get TINT() { return { water:'rgba(107,184,223,0.22)', raptor:'rgba(143,188,180,0.28)', song:'rgba(87,183,130,0.18)', hummingbird:'rgba(201,244,207,0.36)' }; }
+  get GL() { return { water:'Water & shore', raptor:'Raptor', song:'Songbird', hummingbird:'Hummingbird' }; }
 
   BIRDS() {
     if (this._birds) return this._birds;
-    const F = [
-      // name, sci, group, emoji, sizeClass, status, colorAnswer, colorsDetail, sizeDetail, statusDetail, fact, ffQ, ffOpts(|), ffA, habIdx
-      ["American Avocet","Recurvirostra americana","water","🦆","Medium","Common","Rusty-orange head with black-and-white wings","Bold black-and-white body with a cinnamon-orange head and neck in summer.","About 18 inches long, with very long, thin bluish legs.","A common sight on the South Bay’s salt ponds.","It sweeps its curved bill side-to-side through the water to catch tiny bugs.","How does the American Avocet find its food?","It sweeps its curved bill side-to-side through shallow water|It dives from the sky like a rocket|It digs deep holes in dry dirt|It steals food from other birds",0,0],
-      ["Green-Winged Teal","Anas crecca","water","🦆","Small","Common","Chestnut head with a bright green eye-patch","Males have a cinnamon head with a green swoosh; females are speckled brown.","North America’s smallest dabbling duck — about 14 inches.","A common winter visitor to Bay wetlands.","It is the smallest dabbling duck in North America.","What is special about the Green-Winged Teal’s size?","It is the smallest dabbling duck in North America|It is the largest duck in the world|It is taller than a person|It cannot fly at all",0,0],
-      ["Snowy Egret","Egretta thula","water","🕊️","Medium","Common","All white with black legs and bright yellow feet","Snowy-white feathers, slim black legs, and golden-yellow feet.","A slender heron about 24 inches tall.","Common in marshes and along the shoreline.","Its bright yellow feet are nicknamed its “golden slippers.”","What are the Snowy Egret’s yellow feet nicknamed?","Golden slippers|Rain boots|Duck shoes|Sun socks",0,0],
-      ["Great Blue Heron","Ardea herodias","water","🦢","Large","Common","Blue-gray body with a black eye stripe","Slate blue-gray with a white face and a black plume behind the eye.","Up to 4.5 feet tall with a 6-foot wingspan — the Bay’s tallest heron.","Common year-round all around the Bay.","It stands perfectly still, then stabs fish with a lightning-fast strike.","How does the Great Blue Heron catch fish?","It stands still, then strikes fast like a spear|It scoops them up with its feet|It catches them in a net of feathers|It waits for fish to jump into its mouth",0,0],
-      ["White-Faced Ibis","Plegadis chihi","water","🦩","Medium","Uncommon","Glossy maroon with green-bronze wings","Deep chestnut that shines green and purple in sunlight, with a white face edge in summer.","A medium wading bird with a long, down-curved bill.","An uncommon but growing visitor to Bay wetlands.","Its dark feathers shimmer green and purple when the sun hits them.","What happens to the White-Faced Ibis’s feathers in sunlight?","They shimmer green and purple|They turn pure white|They glow in the dark|They change to bright yellow",0,0],
-      ["American White Pelican","Pelecanus erythrorhynchos","water","🦢","Large","Uncommon","Bright white with black wingtips and an orange bill","A huge white body, black flight feathers, and a long orange bill with a throat pouch.","One of North America’s largest birds, with a 9-foot wingspan.","Seen in flocks on Bay lakes and ponds, mostly in winter.","Groups of pelicans herd fish together, then scoop them up as a team.","How do American White Pelicans catch fish?","They work as a team to herd fish, then scoop them up|Each one dives alone from high up|They fish only at night|They grab fish with their feet",0,0],
-      ["Sandhill Crane","Antigone canadensis","water","🦤","Large","Protected","Gray body with a bright red forehead","A tall gray bird with a red crown and a bushy “bustle” of feathers over the tail.","Nearly 4 feet tall with a wide wingspan.","Specially protected in California — a rare and special sight.","They dance — bowing and leaping into the air — to greet their mates.","Why do Sandhill Cranes leap and bow?","They dance to greet their mates|They are chasing after bugs|They are frightened of water|They are learning how to swim",0,0],
-      ["Common Murre","Uria aalge","water","🐧","Medium","Common","Black above and white below, like a tuxedo","A sleek black head and back with a crisp white belly — almost penguin-like.","About 17 inches, with a slim pointed bill.","Common on the ocean and rocky cliffs near the coast.","It “flies” underwater with its wings to chase fish deep below the surface.","How does the Common Murre swim after fish?","It flaps its wings to “fly” underwater|It uses its tail like a boat motor|It just floats and waits|It walks along the sea floor",0,3],
-      ["Cooper's Hawk","Accipiter cooperii","raptor","🦅","Medium","Common","Blue-gray back with a rusty barred chest","Steel-gray above, reddish bars below, with a long, banded tail.","About crow-sized, with short rounded wings.","Common — even in city parks and backyards.","It zips between trees and backyards to surprise smaller birds.","Where does the Cooper’s Hawk love to hunt?","Weaving between trees and backyards|Deep underwater|Only high above the clouds|Inside dark caves",0,1],
-      ["Peregrine Falcon","Falco peregrinus","raptor","🦅","Medium","Protected","Slate-gray back with a black “helmet”","A blue-gray back, pale barred chest, and a dark helmet-like head.","About crow-sized, with long pointed wings built for speed.","Protected, and an amazing comeback story around the Bay.","In a hunting dive it can top 240 mph — the fastest animal on Earth.","What record does the Peregrine Falcon hold?","Fastest animal on Earth in a dive|Loudest bird in the world|Biggest wingspan of any bird|Longest sleeper of all animals",0,1],
-      ["American Kestrel","Falco sparverius","raptor","🦅","Small","Common","Rusty back with blue-gray wings","A colorful little falcon: rusty back, blue-gray wings, and two black stripes on the face.","North America’s smallest falcon — about jay-sized.","Common on wires and fence posts near open fields.","It can hover in one spot in the air to spot bugs and mice below.","What can the tiny American Kestrel do while hunting?","Hover in one spot in the air|Swim under the mud|Dig long tunnels|Climb trees like a squirrel",0,1],
-      ["Great-Horned Owl","Bubo virginianus","raptor","🦉","Large","Common","Mottled brown with feather “ear” tufts","Camouflaged brown-and-gray with big yellow eyes and ear-like tufts.","A big, powerful owl up to 2 feet tall.","Common year-round, but hard to spot — it hunts at night.","Its “horns” are just tufts of feathers — not ears or real horns at all.","What are the Great-Horned Owl’s “horns”?","Tufts of feathers|Real horns|Its actual ears|Sticks it carries around",0,1],
-      ["Turkey Vulture","Cathartes aura","raptor","🦅","Large","Common","Dark brown-black with a bare red head","A big dark bird with a featherless red head and silvery linings under its wings.","Nearly 6-foot wingspan; soars for hours without flapping.","Very common — often seen circling high overhead.","It has an amazing sense of smell and helps clean up by eating dead animals.","How is the Turkey Vulture helpful to nature?","It cleans up by eating dead animals|It plants new trees|It builds nests for other birds|It scares away all the bugs",0,1],
-      ["Black Phoebe","Sayornis nigricans","song","🐦","Small","Common","Sooty black with a clean white belly","A crisp black head and chest with a bright white belly.","A small flycatcher, about 7 inches long.","Very common near water, gardens, and buildings.","It wags its tail up and down while perched, then darts out to catch bugs.","What does the Black Phoebe do while perched?","Wags its tail up and down|Spins around in circles|Claps its wings together|Hangs completely upside down",0,2],
-      ["Broad-Tailed Hummingbird","Selasphorus platycercus","song","🐦","Tiny","Uncommon","Shiny green back with a rose-pink throat","Glittering green above with a bright rose-magenta throat on males.","One of our tiniest birds — under 4 inches.","An uncommon summer visitor to gardens and foothills.","Its wings make a metallic trilling sound as the male flies.","What sound do the Broad-Tailed Hummingbird’s wings make?","A metallic trilling sound|A loud honk|A steady drumbeat|No sound at all",0,2],
-      ["Steller's Jay","Cyanocitta stelleri","song","🐦‍⬛","Medium","Common","Deep blue body with a charcoal-black head and crest","A black head and tall crest that fades into brilliant blue wings and tail.","About crow-sized, with a bold pointed crest.","Common in evergreen forests, campgrounds, and hills.","It can copy the scream of a hawk to trick and scare other birds.","What clever trick can the Steller’s Jay do?","Copy a hawk’s scream to trick other birds|Change its own color|Swim deep underwater|Glow brightly at night",0,2],
-      ["California Scrub-Jay","Aphelocoma californica","song","🐦","Medium","Common","Bright blue with a gray back and white throat","An azure-blue head, wings, and tail with a grayish back — and no crest.","About robin-to-crow sized, slim and long-tailed.","Very common in backyards, parks, and oak woodlands.","It hides thousands of acorns and remembers where most of them are buried.","What amazing memory skill does the California Scrub-Jay have?","It remembers where it hid thousands of acorns|It memorizes hundreds of songs|It can count all the way to a hundred|It never forgets a single face",0,2],
-      ["Loggerhead Shrike","Lanius ludovicianus","song","🐦","Small","Protected","Gray with a black robber’s mask and wings","A pale gray body, black wings and tail, and a bold black mask across the eyes.","About robin-sized, with a hooked bill.","A protected species that has become harder to find.","This songbird hunts like a raptor, earning the nickname “butcher bird.”","What is the Loggerhead Shrike nicknamed?","The butcher bird|The rainbow bird|The night singer|The tiny giant",0,2],
-      ["Western Meadowlark","Sturnella neglecta","song","🐤","Small","Common","Bright yellow chest with a black “V” collar","Sunny yellow underparts with a bold black V across the chest.","A chunky songbird about 9 inches long.","Common in open grasslands and fields.","Its flute-like song is one of the classic sounds of open grasslands.","What is the Western Meadowlark famous for?","Its beautiful flute-like song|Its amazing swimming|Building enormous nests|Its bright red feathers",0,2],
-      ["American Robin","Turdus migratorius","song","🐦","Small","Common","Gray back with a warm orange-red breast","Dark gray above with a rusty-orange belly and a cheerful yellow bill.","A familiar songbird about 10 inches long.","One of the most common backyard birds.","It tilts its head to listen and watch for worms moving in the grass.","How does the American Robin find worms?","It tilts its head to listen and look|It digs with its feet|It smells them underground|It waits only for rainy days",0,2],
-      ["Vermilion Flycatcher","Pyrocephalus rubinus","song","🐦","Tiny","Uncommon","Brilliant flame-red with brown wings","Males glow fiery red on the head and belly, with dark brown wings.","A tiny flycatcher, about 6 inches long.","A rare and exciting find in the Bay Area.","The bright red male flutters up into the air and sings to show off.","Why does the male Vermilion Flycatcher flutter and sing?","To show off for females|To scare away cats|To find its way home|To keep itself warm",0,2],
-      ["Western Bluebird","Sialia mexicana","song","🐦","Small","Common","Deep blue with a rusty-orange chest","A rich blue head and wings with a chestnut-orange breast.","A small thrush about 7 inches long.","Common in open woodlands, parks, and orchards.","It nests in tree holes and happily uses nest boxes people put up.","Where does the Western Bluebird like to nest?","In tree holes and nest boxes|On the open ground|Deep underwater|On top of power lines",0,2],
-      ["Acorn Woodpecker","Melanerpes formicivorus","song","🐦","Small","Common","Black-and-white with a red cap and a clown-like face","A black back, white belly, red crown, and a comical white-and-black face.","About 9 inches long, with a stout chisel bill.","Common wherever oak trees grow.","It stores thousands of acorns in holes it drills in a single “granary” tree.","What does the Acorn Woodpecker build in a tree?","A granary full of stored acorns|A swimming pool|A nest of soft leaves|A drum for playing music",0,2],
-      ["Yellow Warbler","Setophaga petechia","song","🐤","Tiny","Common","Bright golden-yellow all over","Sunny yellow, with faint reddish streaks on the male’s chest.","A tiny songbird about 5 inches long.","Common near streamside willows in spring and summer.","Its cheerful song sounds like “sweet-sweet-sweet-I’m-so-sweet.”","What does the Yellow Warbler’s song sound like?","“Sweet-sweet-sweet-I’m-so-sweet”|A loud, banging drum|A cat’s meow|A honking car horn",0,2],
-      ["White-Crowned Sparrow","Zonotrichia leucophrys","song","🐦","Small","Common","Gray with bold black-and-white head stripes","A plain gray body topped with a crown of bright black-and-white stripes.","A medium sparrow about 7 inches long.","Very common in winter across yards and parks.","Young birds learn their song’s local “accent” from the neighborhood they grow up in.","What do young White-Crowned Sparrows learn from their neighborhood?","Their song’s local “accent”|How to swim|Their exact migration map|The color of their feathers",0,2],
-    ];
-    const FEATURED = { "American Avocet":1, "Great Blue Heron":1, "Peregrine Falcon":1, "Steller's Jay":1 };
-    const ART = {
-      "American Avocet":[
-        "Down on the salt ponds of the South Bay, one shorebird really stands out — the American Avocet. In summer its head and neck turn a warm cinnamon color, while its body stays a sharp pattern of black and white. Long, thin, bluish legs carry it gracefully through the shallow water.",
-        "The avocet’s most famous feature is its bill. It curves gently upward, like a tiny sword bent the wrong way. The bird sweeps this bill side-to-side just under the surface, feeling for tiny bugs and shrimp to snap up.",
-        "Avocets like company. They often feed and rest in big groups, and they defend their nests together — dive-bombing and shouting at anything that comes too close, even much bigger animals.",
-        "Because the Bay’s salt ponds are being restored into healthy wetlands, avocets have plenty of space to feed and raise their chicks. When you visit, look for that up-curved bill sweeping the water — once you spot it, you’ll never forget it."
-      ],
-      "Great Blue Heron":[
-        "The Great Blue Heron is the tallest heron around the Bay, standing up to four and a half feet high. From a distance it looks like a slim, blue-gray statue waiting patiently at the water’s edge. A black stripe runs above each eye, ending in a thin plume at the back of the head.",
-        "Patience is this bird’s superpower. It can stand completely still for many minutes, watching the water. Then — faster than you can blink — its long neck snaps forward and its bill spears a fish. It swallows the fish whole, headfirst.",
-        "Great Blue Herons aren’t picky. They hunt fish, frogs, mice, and even small snakes, in both fresh and salt water. You might spot one at a pond, a creek, a marsh, or even a flooded field.",
-        "In spring, these herons gather to nest in the tops of tall trees, building big stick platforms called a rookery. Watching a heron take off — slow, huge wingbeats folding its neck into an S — is one of the great sights of the Bay."
-      ],
-      "Peregrine Falcon":[
-        "The Peregrine Falcon may be the most amazing athlete in the entire animal kingdom. When it folds its wings and dives after prey — a move called a “stoop” — it can reach speeds over 240 miles per hour. That makes it the fastest animal on Earth.",
-        "Peregrines are built for speed. They have a blue-gray back, a pale chest with fine bars, and a dark “helmet” of feathers on the head. Special bony bumps in their nostrils let them breathe even while diving at incredible speed.",
-        "Not long ago, Peregrine Falcons almost disappeared because of a harmful chemical called DDT that made their eggshells too thin. People banned the chemical and helped the falcons recover. Today they’re a protected success story.",
-        "Around the Bay, Peregrines sometimes nest on tall bridges and city buildings, which feel like cliffs to them. Look up near a bridge tower — you just might see the fastest hunter in the world."
-      ],
-      "Steller's Jay":[
-        "Bold, loud, and beautiful, the Steller’s Jay is impossible to miss in the Bay Area’s evergreen forests and hills. Its front half — head and tall crest — is charcoal black, and its back half explodes into a deep, brilliant blue.",
-        "Steller’s Jays are members of the crow family, which means they’re very smart. They’re also excellent copycats. A Steller’s Jay can imitate the scream of a Red-tailed Hawk to scare other birds away from food — a clever trick.",
-        "These jays love campgrounds and picnic areas, where they’ll happily swoop in to grab a dropped chip or cracker. They also store seeds and nuts for later, helping to plant new trees without even meaning to.",
-        "Listen for their harsh “shaack-shaack-shaack” call echoing through the trees. Once you learn it, you’ll know a Steller’s Jay is nearby long before you see that flash of blue."
-      ]
-    };
-    const groupWord = { water:"water bird", raptor:"bird of prey", song:"songbird" };
-    const sizeWord = { Tiny:"tiny", Small:"small", Medium:"medium-sized", Large:"large" };
-    const habSent = ["It feeds on mudflats, marshes, and the Bay’s salt ponds.","You’ll usually see it soaring in open sky or perched up high.","Look for it in oak woodlands, parks, and backyards.","It lives out on the open ocean and along rocky cliffs."];
-    const statSent = { Common:"It’s common here, so keep your eyes open — you’ll likely spot one.", Uncommon:"It’s a little uncommon, so seeing one is a lucky treat.", Protected:"It’s specially protected, which makes every sighting extra special." };
-    this._birds = F.map((r,i)=>{
-      const [name,sci,group,emoji,sizeClass,status,colorAnswer,colorsDetail,sizeDetail,statusDetail,fact,ffQ,ffOptsStr,ffA,habIdx]=r;
-      let article = ART[name];
-      if(!article){
-        article = [
-          `The ${name} is a ${sizeWord[sizeClass]} ${groupWord[group]} you can meet around the San Francisco Bay. ${colorsDetail} ${habSent[habIdx]}`,
-          `${fact} ${statSent[status]}`
-        ];
+    const DATA = [
+      {
+            "id": 0,
+            "slug": "american-avocet",
+            "name": "American Avocet",
+            "sci": "Recurvirostra americana",
+            "group": "water",
+            "sizeClass": "Medium",
+            "status": "Common",
+            "colorAnswer": "Black-and-white body",
+            "colorsDetail": "Black-and-white body; rusty head and neck in breeding season; grayish white after breeding; bluish-gray legs.",
+            "sizeDetail": "Length 16.9-18.5 in; wingspan about 28.4 in.",
+            "statusDetail": "Not endangered; increasing in recent decades.",
+            "fact": "During breeding season, American Avocets turn rusty orange, then change back to grayish white after breeding season.",
+            "article": [
+                  "I went to Palo Alto Wetland Preserve and saw the American Avocets. I like them because of their long black and curved beak, and their unique feathers. In my opinion, these birds are very graceful, for their thin legs that walk slowly in the shallow water. Many other waders do that too!",
+                  "American Avocets have a special method for eating. They swing their long, thin and curved bill in the water. As they do that, they also scoop up tiny shrimp and fish. In my opinion, that is a very unique eating method.",
+                  "The American Avocet has a brown white wing and their tails are gray, black and white. Their heads and plumages are white, —well, usually— their bills are black and slightly curved up at the tip, and their legs are pastel gray-blue, which gives them their colloquial name, Blue Sharks.",
+                  "During the American Avocets breeding season, which is April to June, their plumage turns into a rusty orange color! Then after their breeding season, those feathers are replaced by grayish-white colored ones. That’s one of the biggest reasons why I like the American Avocet.",
+                  "The American Avocet’s biggest threat is the loss of wetlands caused by climate change. Another threat is pesticides leaching into the wetlands. The toxic chemicals are very harmful to all wildlife. And the chemicals also mix in with the wetlands and affect feeding birds and nest success too!",
+                  "American Avocets are not endangered. In fact, they have been increasing during the recent decades. But that doesn’t mean that humans shouldn’t help them! So, people still can help these interesting birds by stopping the air pollution (that causes the climate change) and also stop using the pesticides and find a different way for pest control. This will not only help the American Avocets, but it will also help lots of other animals!"
+            ],
+            "photos": [
+                  {
+                        "src": "assets/birds/American_Avocet-breeding.webp",
+                        "caption": "Breeding american avocet"
+                  },
+                  {
+                        "src": "assets/birds/American_Avocet-chicks.webp",
+                        "caption": "American avocet with chicks"
+                  },
+                  {
+                        "src": "assets/birds/American_Avocet-nonbreeding.webp",
+                        "caption": "Nonbreeding american avocet"
+                  }
+            ],
+            "audio": {
+                  "src": "assets/sounds/american_avocet-jonathon_jongsma.ogg",
+                  "recordist": "Jonathon Jongsma"
+            },
+            "quizOverride": [
+                  {
+                        "q": "What does the American Avocet eat?",
+                        "opts": [
+                              "Fish, frogs, crustaceans, insects, and worms",
+                              "Small fish and shrimp",
+                              "Different foods during different times of day, including fruit and invertebrates",
+                              "Fish and other ocean prey caught underwater"
+                        ],
+                        "a": 1
+                  },
+                  {
+                        "q": "How does the American Avocet usually get food?",
+                        "opts": [
+                              "Sweeps its long upturned bill side to side through shallow water",
+                              "Picks insects from foliage, catches them in short flights, or hovers near leaves",
+                              "Looks and listens from dense cover, then bursts out quickly after prey",
+                              "Hovers in place while drinking nectar from flowers or feeders"
+                        ],
+                        "a": 0
+                  },
+                  {
+                        "q": "Which threat affects the American Avocet?",
+                        "opts": [
+                              "Wetland loss from climate change",
+                              "Pesticides, habitat loss, shooting, and taking eggs or chicks",
+                              "Loss of oak woodland habitat and nesting cavities",
+                              "Habitat loss, climate change, pesticides, predators, windows, and cars"
+                        ],
+                        "a": 0
+                  }
+            ],
+            "habIdx": 0
+      },
+      {
+            "id": 1,
+            "slug": "black-phoebe",
+            "name": "Black Phoebe",
+            "sci": "Sayornis nigricans",
+            "group": "song",
+            "sizeClass": "Small",
+            "status": "Common",
+            "colorAnswer": "Black head, breast, wings, tail, bill, and feet with a white belly and rump",
+            "colorsDetail": "Black head, breast, wings, tail, bill, and feet with a white belly and rump.",
+            "sizeDetail": "Length 6-7 in; weight 0.5-0.8 oz; wingspan 26-28 cm.",
+            "statusDetail": "Very numerous; increased by more than 2% each year from 1966 to 2019.",
+            "fact": "I went to Merced National Wildlife Refuge and saw a Black Phoebe.",
+            "article": [
+                  "I went to Merced National Wildlife Refuge and saw a Black Phoebe. Found year-round in the entire Bay Area, you may see one of these birds in your backyard or neighborhood. They live in open woodlands near the water, and will sometimes be seen near ponds to feed. They may also nest on cliffs and beaches. Once, a pair of Black Phoebes were forced to share their nest with a pair of House Finches! The finches even added five eggs to the six Black Phoebe ones that were already there! The females took turns doing the work until the nest was abandoned to both species.",
+                  "Black Phoebes eat by perching 7 feet off ground or water, looking for their prey. Then they will either catch them in the air, grab them on the ground, or snatch them from the surface or just below the surface of the water. Black Phoebes eat insects and arthropods including bees, wasps, flies, beetles, grasshoppers, damselflies, dragonflies, termites, spiders, and minnows. They may also feed fish to their offspring. On rare occasions though, they will eat small berries.",
+                  "Black Phoebes have a black head, breast, wings, tail, bill, and feet. Meanwhile, they have a contrasting white belly and rump. The feathers on their wings have a tint of gray underneath. They weigh 0.5 to 0.8 oz. They have a length of 6 to 7 inches and have a wingspan of 26 to 28 cm.",
+                  "After mating, the male Black Phoebe is the one to show the female potential nesting sites. The male will hover in front of each possible nesting site for 5 to 10 seconds before moving on. But afterward, it’s the female that picks the nesting site and builds the nest.",
+                  "Not even close to extinction, Black Phoebes are very numerous. Throughout 1966 to 2019, the number of Black Phoebes increased by more than 2% each year. And with human development, Black Phoebes have found many suitable nesting sites that include buildings, culverts, and bridges. And threats? Black Phoebes only have one threat, which is water pollution. Since they live near water, we need to keep the water clean! So as far away from extinction they are, we still need to protect Black Phoebes!"
+            ],
+            "photos": [
+                  {
+                        "src": "assets/birds/Black_Phoebe-adult01.webp",
+                        "caption": "Adult black phoebe"
+                  },
+                  {
+                        "src": "assets/birds/Black_Phoebe-adult02.webp",
+                        "caption": "Adult black phoebe"
+                  },
+                  {
+                        "src": "assets/birds/Black_Phoebe-adult03.webp",
+                        "caption": "Adult black phoebe"
+                  }
+            ],
+            "audio": {
+                  "src": "assets/sounds/black-phoebe-jonathon-jongsma.mp3",
+                  "recordist": "Jonathon Jongsma"
+            },
+            "quizOverride": [
+                  {
+                        "q": "Where would you most expect to find the Black Phoebe?",
+                        "opts": [
+                              "Desert areas, open country, and warm dry habitats",
+                              "Coastal waters, rocky nesting cliffs, and ocean colonies",
+                              "Open country, grasslands, shrubs, and fence lines",
+                              "Open woodlands near water, ponds, bridges, beaches, and neighborhoods"
+                        ],
+                        "a": 3
+                  },
+                  {
+                        "q": "Which fun fact belongs to the Black Phoebe?",
+                        "opts": [
+                              "A pair once shared a nest with House Finches",
+                              "Hollow bones help this large bird stay light enough to fly",
+                              "Does not build its own nest cavity and may use woodpecker holes",
+                              "Soft wing feathers help it fly quietly"
+                        ],
+                        "a": 0
+                  },
+                  {
+                        "q": "Which population fact matches the Black Phoebe?",
+                        "opts": [
+                              "Common throughout the Bay Area",
+                              "Not endangered and increased about 2.8% per year from 1968 to 2017",
+                              "Very numerous but declined about 20% from 1966 to 2019",
+                              "Very numerous and increased more than 2% per year from 1966 to 2019"
+                        ],
+                        "a": 3
+                  }
+            ],
+            "habIdx": 2
+      },
+      {
+            "id": 2,
+            "slug": "coopers-hawk",
+            "name": "Cooper’s Hawk",
+            "sci": "Accipiter cooperii",
+            "group": "raptor",
+            "sizeClass": "Medium",
+            "status": "Common",
+            "colorAnswer": "Adult has blue-gray back with warm rusty barring on the chest",
+            "colorsDetail": "Adult has blue-gray back with warm rusty barring on the chest.",
+            "sizeDetail": "Males 14.6-15.3 in; females 16.5-17.7 in; wingspan 24.4-35.4 in.",
+            "statusDetail": "Pretty common; population increased from 1966 to 2019.",
+            "fact": "They tend to capture prey with their feet and squeeze it to death.",
+            "article": [
+                  "I went to Merced National Wildlife Refuge and saw Cooper's Hawk. The Cooper’s Hawk is found year round in all of the Bay Area. One distinctive fact about the Cooper’s Hawk is that its tail is more square at the bottom instead of round. Using that fact, I was able to identify the Cooper’s Hawk I saw on my way to tennis class! It was perching on the power line. Now you know how to identify a Cooper’s Hawk!",
+                  "Cooper’s Hawks feed by looking and listening for prey in a dense cover, moving from perch to perch. After they find their prey, they put on a burst of speed to catch the prey. Sometimes, they hunt low over the ground. Then they approach from behind shrubs and other plants, surprising their prey. Cooper’s Hawks eat mostly small birds like European Starlings, Mourning Doves, Rock Pigeons, American Robins, Northern Flickers, quails, pheasants, grouse, chickens, and several types of jays. They also might eat small mammals such as chipmunks, hares, mice, and bats. Cooper’s Hawks in the west are more commonly found eating mammals.",
+                  "Male Cooper’s Hawks are 14.6 inches to 15.3 inches in length, and weigh 7.8 ounces to 14.5 ounces. Their size is similar to a crow, a Mallard Duck, or a Herring Gull. They have a wingspan of 24.4 inches to 35.4 inches, which is similar to a Broad-winged Hawk. Female Cooper’s Hawks have a length of 16.5 inches to 17.7 inches. They weigh 11.6 ounces to 24.0 ounces and have a wingspan of 29.5 inches to 35.4 inches.",
+                  "An interesting fact about the Cooper’s Hawk is that they tend to capture prey with their feet and squeeze it to death. They hold prey away from their body and squeeze until their catch is dead, unlike falcons, who kill their prey by biting it. Some Cooper’s Hawks and other hawks species even drown their prey by holding it under water until it stops breathing and dies.",
+                  "If you have a bird feeder in your backyard, you might attract the attention of a Cooper’s Hawk, given that they eat smaller birds. So unless you want to see the smaller birds being killed and eaten, you should probably take your feeder down for a couple days. Then the hawk will move on.",
+                  "Cooper’s Hawks are pretty common. Their population increased from 1966 to 2019. During the mid-twentieth century, this hawk's stable population decreased due to the use of pesticide DDT (dichloro-diphenyl-trichloroethane). 70% of death in the urban areas is because of collisions with human-made objects like windows and cars. Up to one million Cooper’s Hawks die every year in the United States alone because of collisions.",
+                  "To help Cooper’s Hawks, you can use less glass and watch out when driving! In other words, try not to crash into a Cooper’s Hawk, or even better, any bird (or maybe even any type of animal) when driving! Even though their population is very stable, we should still protect Cooper’s Hawks. And plus, if they become extinct, we’ll lose an animal to eat mice (though a lot of smaller birds and small mammals like hares and chipmunks will be saved), and who likes mice? So keep this species protected!"
+            ],
+            "photos": [
+                  {
+                        "src": "assets/birds/Cooper's_Hawk-immature01.webp",
+                        "caption": "Immature cooper's hawk"
+                  },
+                  {
+                        "src": "assets/birds/Cooper's_Hawk-immature02.webp",
+                        "caption": "Immature cooper's hawk"
+                  },
+                  {
+                        "src": "assets/birds/Cooper's_Hawk-mature.webp",
+                        "caption": "Mature cooper's hawk"
+                  }
+            ],
+            "audio": {
+                  "src": "assets/sounds/coopers-hawk-jonathon-jongsma.ogg",
+                  "recordist": "Jonathon Jongsma"
+            },
+            "quizOverride": [
+                  {
+                        "q": "Which size fact matches the Cooper’s Hawk?",
+                        "opts": [
+                              "Length about 4 ft; wingspan about 9 ft.",
+                              "Length 25.2-31.9 in; wingspan 66.9-70.1 in; weight about 70.5 oz.",
+                              "Males 14.6-15.3 in; females 16.5-17.7 in; wingspan 24.4-35.4 in.",
+                              "Length 16.9-18.5 in; wingspan about 28.4 in."
+                        ],
+                        "a": 2
+                  },
+                  {
+                        "q": "Which color clue describes the Cooper’s Hawk?",
+                        "opts": [
+                              "Black head, breast, wings, tail, bill, and feet with a white belly and rump.",
+                              "Dark brownish head and upperparts with white breast and belly.",
+                              "Mottled gray-brown with reddish-brown face and a white throat patch.",
+                              "Adult has blue-gray back with warm rusty barring on the chest."
+                        ],
+                        "a": 3
+                  },
+                  {
+                        "q": "Which conservation fact matches the Cooper’s Hawk?",
+                        "opts": [
+                              "Pretty common desert species",
+                              "Very numerous but declined about 20% from 1966 to 2019",
+                              "Low concern",
+                              "Pretty common and increased from 1966 to 2019"
+                        ],
+                        "a": 3
+                  }
+            ],
+            "habIdx": 1
+      },
+      {
+            "id": 3,
+            "slug": "green-winged-teal",
+            "name": "Green-Winged Teal",
+            "sci": "Anas crecca",
+            "group": "water",
+            "sizeClass": "Small",
+            "status": "Common",
+            "colorAnswer": "Small brown duck",
+            "colorsDetail": "Small brown duck; males have chestnut and green on the head and a green wing patch.",
+            "sizeDetail": "Length 12.2-15.3 in; weight 4.9-17.6 oz; wingspan 20.5-23.2 in.",
+            "statusDetail": "Quite common; North American breeding population about 6,700,000 birds.",
+            "fact": "It is the smallest dabbling duck in the world!",
+            "article": [
+                  "I went to Shoreline Park and saw the Green-Winged Teal. The Aleutian Islands of Alaska have their own race, called Anas crecca nimia. Unlike the other Green-Winged Teal, this race doesn’t migrate. Instead, they go to ponds and lakes on the island’s beaches where they forage tide pools and sometimes shallow-water reefs. Let’s dig (or I should say fly) in!",
+                  "Green-Winged Teals, like all other dabbling ducks (also known as puddle ducks), eat by dabbling, which is obvious because they are called dabbling ducks (I don’t know why they are called puddle ducks so don’t ask me about that). They eat on shorelines, in shallow waters, on agricultural fields, and mudflats. Green-Winged Teals eat sedge fruit, seeds of pondweeds, grasses, smartweeds, sea purslane, bulrush, dwarf spikerush, swamp timothy, corn, rice, midges, tadpoles, molluscs, and crustaceans. Others include worms, seed shrimp, and copepods.",
+                  "An interesting fact about the Green-Winged Teal is that it is the smallest dabbling duck in the world! (To be specific, the males are because they are smaller than the females). And the fastest record of a Green-Winged Teal is 60 miles per hour! A Green-Winged Teal has a length of 12.2–15.3 in (31–39 cm) and weighs 4.9–17.6 oz (140–500 g). They also have a wingspan of 20.5–23.2 in (52–59 cm).",
+                  "Green-Winged Teals are quite common. Their population increased during 1966 and 2019. Most of the population breeds in Canada and Alaska because relatively remote and inaccessible nesting areas buffer this species from habitat losses farther south caused by agricultural and urban development. Sadly, about 1.2 to 1.4 million Green-winged Teal were shot in the U.S. in 2019 and 2020. Bag limits for ducks are changed annually based on population size estimates and harvest objectives, helping to safeguard these species against declines. So the only threat that these birds face is hunting pressure. They are a very popular species taken by hunters each year in the USA. According to Partners in Flight, the North American breeding population of the Green-winged teal is 6,700,000 breeding birds. So to help Green-Winged Teals, please don’t shoot them! Even though Green-Winged Teals are widespread and quite common, they are still unique birds and I hope like me, you agree that they should thrive!"
+            ],
+            "photos": [
+                  {
+                        "src": "assets/birds/Green_Winged_Teal-female.webp",
+                        "caption": "Female green winged teal"
+                  },
+                  {
+                        "src": "assets/birds/Green_Winged_Teal-male.webp",
+                        "caption": "Male green winged teal"
+                  },
+                  {
+                        "src": "assets/birds/Green_Winged_Teal-pair.webp",
+                        "caption": "Green winged teal pair"
+                  }
+            ],
+            "audio": {
+                  "src": "assets/sounds/green-winged-teal-mikko-heikkinen.mp3",
+                  "recordist": "Mikko Heikkinen"
+            },
+            "quizOverride": [
+                  {
+                        "q": "Which feeding behavior matches the Green-Winged Teal?",
+                        "opts": [
+                              "Forages and stores nuts or seeds in the ground for winter",
+                              "Stores acorns tightly in holes in a granary tree and drinks sap from drilled holes",
+                              "Dabbles in shallow water, mudflats, shorelines, and agricultural fields",
+                              "Dives underwater and “flies” through the water, often foraging in flocks"
+                        ],
+                        "a": 2
+                  },
+                  {
+                        "q": "Which habitat clue matches the Green-Winged Teal?",
+                        "opts": [
+                              "Wetlands, marshes, fields, and migration stopover areas",
+                              "Oak woodlands and Bay Area wooded neighborhoods",
+                              "Open woodlands near water, ponds, bridges, beaches, and neighborhoods",
+                              "Ponds, lakes, beaches, tide pools, mudflats, and shallow wetlands"
+                        ],
+                        "a": 3
+                  },
+                  {
+                        "q": "Which conservation problem is linked to the Green-Winged Teal?",
+                        "opts": [
+                              "Wetland loss from climate change",
+                              "Development, overgrazing, slow oak regeneration, nest competition, and shooting",
+                              "Hunting, oil spills, fishing gear, and disturbance",
+                              "Hunting pressure"
+                        ],
+                        "a": 3
+                  }
+            ],
+            "habIdx": 0
+      },
+      {
+            "id": 4,
+            "slug": "snowy-egret",
+            "name": "Snowy Egret",
+            "sci": "Egretta thula",
+            "group": "water",
+            "sizeClass": "Medium",
+            "status": "Common",
+            "colorAnswer": "White body, black bill and legs, yellow feet, and yellow patch around the eyes",
+            "colorsDetail": "White body, black bill and legs, yellow feet, and yellow patch around the eyes.",
+            "sizeDetail": "Length 20-27 in; wingspan about 41 in.",
+            "statusDetail": "Currently common and low conservation concern after earlier feather-trade declines.",
+            "fact": "I went to Baylands Nature Preserve and saw the Snowy Egret and the Great Egret.",
+            "article": [
+                  "I went to Baylands Nature Preserve and saw the Snowy Egret and the Great Egret. At first, I thought they were the same type of bird. But when I looked at them through my binoculars, I could tell that they were different species of birds. The Snowy Egret has a black beak, and yellow feet, meanwhile, the Great Egret has a yellow beak, and black feet. The Snowy Egret is also smaller than the Great Egret. The Snowy Egret and the Great Egret have different eating methods too. While the Snowy Egret paddles its feet in the water, finds its prey, captures it and eats it, the Great Egret wades in the water, waits for its prey to come near it, then catches it and eats it.",
+                  "Snowy Egrets are mostly white. They have a white body, (not counting their legs and feet), black bills and legs with a yellow patch around their eyes. They also have yellow feet. Snowy Egrets have a length of 20 to 27 inches and a wingspan of 41 inches.",
+                  "Snowy Egrets eat mostly fish, frogs, crustaceans, insects, and worms. They can eat while they run, hop, stand, or walk. Snowy Egrets may also vibrate their beaks, sway their heads, and flick their wings as they gather their prey.",
+                  "During their breeding season which is mid-April to September, the Snowy Egrets head, neck, and back develop long feathers. The area that is between their beaks and eyes turn red. Snowy Egrets breed in central Oregon, central California, and discontinuous zones and pockets of some western states of Idaho, Montana, Wyoming, South Dakota, Nevada, New Mexico, Utah, and Arizona.",
+                  "Since Snowy Egrets grew long, wispy feathers during their breeding season, people in 1886 would kill them for those feathers which cost $32 each ounce! Because of that, Snowy Egrets got endangered! But in the early twentieth century, early conservationists were able to keep Snowy Egrets alive! After that, Snowy Egrets became common, and are found mostly in marshes.",
+                  "The loss of trees for Snowy Egrets to nest in is a major threat to them. Humans that are clearing their habitat, diversification to the hydrology of wandering around in areas, and oil spill impacts to particular breeding, foraging, and roosting sites is also a threat.",
+                  "Even though Snowy Egrets are low in conservation, we still have to help them if we want them to thrive. So here are some ways you can help them. Stop clearing their habitat, stop foraging in their areas, and don’t spill oil. Then most importantly, don’t kill them for their feathers they have when it’s their breeding season. Snowy Egrets are interesting types of birds, and they deserve to be well cared for by humans."
+            ],
+            "photos": [
+                  {
+                        "src": "assets/birds/Snowy_Egret-breeding01.webp",
+                        "caption": "Breeding snowy egret"
+                  },
+                  {
+                        "src": "assets/birds/Snowy_Egret-breeding02.webp",
+                        "caption": "Breeding snowy egret"
+                  },
+                  {
+                        "src": "assets/birds/Snowy_Egret-nonbreeding.webp",
+                        "caption": "Nonbreeding snowy egret"
+                  }
+            ],
+            "audio": {
+                  "src": "assets/sounds/snowy-egret-paul-marvin.mp3",
+                  "recordist": "Paul Marvin"
+            },
+            "quizOverride": [
+                  {
+                        "q": "What does the Snowy Egret eat?",
+                        "opts": [
+                              "Fish and other ocean prey caught underwater",
+                              "Fish, frogs, crustaceans, insects, and worms",
+                              "Mostly smaller birds, plus some small mammals",
+                              "Plants, seeds, grains, insects, and small animals"
+                        ],
+                        "a": 1
+                  },
+                  {
+                        "q": "How does the Snowy Egret usually get food?",
+                        "opts": [
+                              "Swims in groups and herds fish instead of diving like Brown Pelicans",
+                              "Runs, hops, stands, walks, vibrates its bill, sways its head, and flicks its wings to gather prey",
+                              "Holds acorns with its feet and uses both mandibles to open the shell",
+                              "Probes mud and swishes its sensitive bill through shallow water"
+                        ],
+                        "a": 1
+                  },
+                  {
+                        "q": "Which threat affects the Snowy Egret?",
+                        "opts": [
+                              "Removal of trees and dead nesting trees",
+                              "Habitat loss, climate change, pesticides, predators, windows, and cars",
+                              "Loss of nesting trees, habitat disturbance, and oil spills",
+                              "Pollutants, pesticides, selenium, disturbance at colonies, and water diversion"
+                        ],
+                        "a": 2
+                  }
+            ],
+            "habIdx": 0
+      },
+      {
+            "id": 5,
+            "slug": "peregrine-falcon",
+            "name": "Peregrine Falcon",
+            "sci": "Falco peregrinus",
+            "group": "raptor",
+            "sizeClass": "Medium",
+            "status": "Protected",
+            "colorAnswer": "Blue-gray wings, black head/eye area, white face, dark-brown and white chest, gray-and-white underwing",
+            "colorsDetail": "Blue-gray wings, black head/eye area, white face, dark-brown and white chest, gray-and-white underwing.",
+            "sizeDetail": "Length about 1.5 ft; wingspan about 3.5 ft.",
+            "statusDetail": "Low concern now; recovered after DDT-era declines and removal from endangered list in 1999.",
+            "fact": "As you should know, cheetahs are the world’s fastest land animal, and can reach 70 miles per hour when they run.",
+            "article": [
+                  "As you should know, cheetahs are the world’s fastest land animal, and can reach 70 miles per hour when they run. But can you guess how fast the Peregrine Falcon can dive? They can reach the speed of 240 miles per hour, which is more than three times as fast as the cheetahs! In fact, they are the fastest animal on Earth!",
+                  "The Peregrine Falcon eats in a very interesting way. Once they have found their prey, they dive from 300 to 3,000 feet above their prey, and they tuck their wings in. Then they dive down and capture their prey with their sharp talons, though they sometimes miss and they would have to dive again but they usually would hit their prey to make them dizzy, then strike. Peregrine Falcons eat songbirds, ptarmigan, ducks, grebes, thrushes, gulls, longspurs, shorebirds, waxwings, buntings, larks, starlings, pigeons, storm-petrels, bats, rodents, and fish.",
+                  "Peregrine Falcons have blue-gray wings, a black top of their head and around their eye, a white face, a white and dark-brown chest, and a gray and white underwing. Peregrine Falcons have a length of 1.5 feet and a wingspan of 3.5 feet.",
+                  "Peregrine Falcons have three eyelids to keep their eyes safe and moisturized. That third eyelid is see through, so that Peregrine Falcons can see while the eyelid is closed! That’s one reason why I like them.",
+                  "Peregrine Falcon threats are pesticide poisoning, habitat loss, shooting, and taking their eggs and chicks. In the 1940s, the Peregrine Falcon almost became extinct in North America because of the use of DDT (dichloro-diphenyl-trichloroethane)as insecticides. In 1970, they were included in the Endangered Species Act. Their population grew back because of great conservation efforts, and they got removed from the list in 1999.",
+                  "Even though Peregrine Falcons are of low concern, humans can still help them! So, here are some things you can do for them: stop using pesticides and use other things to kill pests-things that are not harmful, stop destroying their habitat, stop shooting, and don’t take their eggs and chicks (Well, that’s obvious)! Peregrine Falcons are interesting birds, and I hope they will someday be appreciated by everyone!"
+            ],
+            "photos": [
+                  {
+                        "src": "assets/birds/Peregrine_Falcon-adult_male.webp",
+                        "caption": "Adult male peregrine falcon"
+                  },
+                  {
+                        "src": "assets/birds/Peregrine_Falcon-juvenile01.webp",
+                        "caption": "Juvenile peregrine falcon"
+                  },
+                  {
+                        "src": "assets/birds/Peregrine_Falcon-juvenile02.webp",
+                        "caption": "Juvenile peregrine falcon"
+                  }
+            ],
+            "audio": {
+                  "src": "assets/sounds/peregrine-falcon-sharadapte.wav",
+                  "recordist": "Sharad Apte"
+            },
+            "quizOverride": [
+                  {
+                        "q": "Where would you most expect to find the Peregrine Falcon?",
+                        "opts": [
+                              "Cliffs, bridges, towers, open wetlands, and shorelines",
+                              "Forests, deserts, parks, suburbs, and many Bay Area habitats",
+                              "Open fields, perches, farmland edges, and places with nesting cavities",
+                              "Coastal waters, rocky nesting cliffs, and ocean colonies"
+                        ],
+                        "a": 0
+                  },
+                  {
+                        "q": "Which fun fact belongs to the Peregrine Falcon?",
+                        "opts": [
+                              "Its scientific name includes words connected to diving and auks",
+                              "Can dive about 240 miles per hour",
+                              "Named after Georg Steller, not the word “stellar”",
+                              "Sometimes eats ticks and parasites from a Mule Deer’s back"
+                        ],
+                        "a": 1
+                  },
+                  {
+                        "q": "Which population fact matches the Peregrine Falcon?",
+                        "opts": [
+                              "Not endangered and increased about 2.8% per year from 1968 to 2017",
+                              "Common throughout the Bay Area",
+                              "Not endangered and increasing in recent decades",
+                              "Recovered from DDT-era declines and is now low concern"
+                        ],
+                        "a": 3
+                  }
+            ],
+            "habIdx": 1
+      },
+      {
+            "id": 6,
+            "slug": "great-blue-heron",
+            "name": "Great Blue Heron",
+            "sci": "Ardea herodias",
+            "group": "water",
+            "sizeClass": "Large",
+            "status": "Common",
+            "colorAnswer": "Blue-gray body, white head, black crown, and lavender-mauve legs",
+            "colorsDetail": "Blue-gray body, white head, black crown, and lavender-mauve legs.",
+            "sizeDetail": "About 4 ft tall; wingspan 6-7 ft; weight about 5-6 lb.",
+            "statusDetail": "Not endangered.",
+            "fact": "I went to Baylands Nature Preserve and saw the Great Blue Heron.",
+            "article": [
+                  "I went to Baylands Nature Preserve and saw the Great Blue Heron. I like how they walk slowly and gracefully through the calm water or dry stalks of grass. (usually near the edge of the water.)",
+                  "The Great Blue Heron eats by standing as still as a statue, looking in the water for prey, then…snap!!! They catch their prey the instant they bend their neck low and when they are focusing only on it. They usually do this in shallow water or on the shore in marsh grass. They never go too far from the water. Great Blue Herons eat reptiles, fish, small mammals, amphibians, insects, and other small birds.",
+                  "Great Blue Herons have blue-gray plumages and bodies, black on the top of their heads, lavender-mauve legs, and a white head. They are 4 feet tall and their wingspan is 6 to 7 feet.",
+                  "Even though Great Blue Herons are so large, they weigh only 5 to 6 pounds! That’s because of their hollow bones that all birds have. Hollow bones help make birds lighter so it is easier for them to fly.",
+                  "Traffic, motorboats, and logging are a big threat to Great Blue Herons because they can disturb nesting colonies. Chemical pollutants and other reasons why water quality is reduced are also a threat to them.",
+                  "Even though Great Blue Herons are not endangered, humans can still help them! So here are some ways you can help them: stopping traffic along the wetlands, not having a lot of motorboats, (but of course there can be some), stop logging because Great Blue Herons nest on trees, which if they fall, they can get seriously injured or die. Stopping chemical pollutants will help not the Great Blue Heron but also a variety of other animals! The Great Blue Heron is an interesting bird, and I know that they should get well protected."
+            ],
+            "photos": [
+                  {
+                        "src": "assets/birds/Great_Blue_Heron-adult01.webp",
+                        "caption": "Adult great blue heron"
+                  },
+                  {
+                        "src": "assets/birds/Great_Blue_Heron-adult02.webp",
+                        "caption": "Adult great blue heron"
+                  },
+                  {
+                        "src": "assets/birds/Great_Blue_Heron-juvenile.webp",
+                        "caption": "Juvenile great blue heron"
+                  }
+            ],
+            "audio": {
+                  "src": "assets/sounds/great-blue-heron-national-park-service.ogg",
+                  "recordist": "National Park Service"
+            },
+            "quizOverride": [
+                  {
+                        "q": "Which size fact matches the Great Blue Heron?",
+                        "opts": [
+                              "Length 8.7-12.2 in; wingspan 20-24 in.",
+                              "About 4 ft tall; wingspan 6-7 ft; weight about 5-6 lb.",
+                              "Length 4.7-5.1 in; wingspan 6.3-7.9 in; weight 0.3-0.4 oz.",
+                              "Length 12.2-15.3 in; weight 4.9-17.6 oz; wingspan 20.5-23.2 in."
+                        ],
+                        "a": 1
+                  },
+                  {
+                        "q": "Which color clue describes the Great Blue Heron?",
+                        "opts": [
+                              "Blue-gray body, white head, black crown, and lavender-mauve legs.",
+                              "Black head, breast, wings, tail, bill, and feet with a white belly and rump.",
+                              "Adult has blue-gray back with warm rusty barring on the chest.",
+                              "Mottled gray-brown with reddish-brown face and a white throat patch."
+                        ],
+                        "a": 0
+                  },
+                  {
+                        "q": "Which conservation fact matches the Great Blue Heron?",
+                        "opts": [
+                              "Not endangered",
+                              "Not endangered and quite common",
+                              "Recovered from DDT-era declines and is now low concern",
+                              "Low concern"
+                        ],
+                        "a": 0
+                  }
+            ],
+            "habIdx": 0
+      },
+      {
+            "id": 7,
+            "slug": "broad-tailed-hummingbird",
+            "name": "Broad-Tailed Hummingbird",
+            "sci": "Selasphorus platycercus",
+            "group": "hummingbird",
+            "sizeClass": "Tiny",
+            "status": "Uncommon",
+            "colorAnswer": "Iridescent green above, white chest, greenish or buffy flanks",
+            "colorsDetail": "Iridescent green above, white chest, greenish or buffy flanks; males have a rose-magenta throat.",
+            "sizeDetail": "Length 3.1-3.5 in; weight 0.1-0.2 oz.",
+            "statusDetail": "Population currently high but declined by about 45% from 1966 to 2019.",
+            "fact": "Broad-Tailed Hummingbirds don’t really have a unique way of eating.",
+            "article": [
+                  "I have a hummingbird feeder in my backyard and it is very fun to watch the hummingbirds fly there and sip the nectar. The type of hummingbird that comes to drink from the feeder is the Broad-Tailed Hummingbird. There are two hummingbird families in our backyard. One on the right and one on the left. Once, when the family on the left was drinking from the hummingbird feeder, the other family came too. And since hummingbirds are very territorial, they began to fight. I think the family on the left won, but it is very hard to track down each hummingbird, for they both look the same. I saw them fight a few more times. But the part I think is very funny is when my mom and I took the hummingbird feeder inside to refill it, a hummingbird came to drink nectar. But since the hummingbird feeder was gone, it was trying to find nectar by pecking on the side of the cup that hung above the feeder that was supposed to drown the ants that tried to drink the nectar. It was very funny to see the hummingbird search. They’re really fun to watch.",
+                  "Broad-Tailed Hummingbirds don’t really have a unique way of eating. As usual, they will just fly over to a flower or a feeder to drink their nectar. The only part that is interesting is that they fly in place. Because hummingbirds are the only type of birds that can fly and place. So if you tried to ask your pet parrot (if you even have one) to even try to fly and place, there’s no way it would succeed.",
+                  "Broad-Winged Hummingbirds eat nectar from flowers that include pussy willows, larkspur, red columbine, indian paintbrush, sage, scarlet gilia, currant, and glacier lily. Since nectar is low protein food, Broad-Tailed Hummingbirds also eat insects. They will pick them from leaves, catch them from the air, or pluck them out of spiderwebs. They may sometimes use sap as nectar, by visiting holes drilled by Red-Naped Sapsuckers.",
+                  "Despite their size, Broad-Tailed Hummingbirds are very territorial. They will chase away unwelcome visitors. They do this not only near their nest, but also to keep others away from flowers or bird feeders. That is probably why the hummingbirds that visit my bird feeder were chasing each other (if you still remember from the beginning).",
+                  "The population of the Broad-Tailed Hummingbird is currently high, but between 1966 and 2019, the number of Broad-Tailed Hummingbirds has declined by 45%. The reason(s) their population is not clear, but climate change may affect both their breeding, and their survival during the winter. In some parts of their breeding sites, warmer temperatures in the Rocky Mountains, causing plants in high elevation. This means the Rocky Mountains flower earlier, which shortens the time the Broad-Tailed Hummingbirds are able to drink these sources of nectar. Harsh Winter temperatures in winter areas can affect survival. Colorado reported fewer hummingbirds returned to breeding following an apparently severe winter in Mexico, in the late 1950s. Window strikes, collisions with cars, and electric fences are also threats to hummingbirds. And like other hummingbirds, Broad-Tailed Hummingbirds population may increase with more hummingbird feeders, due to more nectar availability.",
+                  "To help Broad-Tailed Hummingbirds stay alive, you can stop collisions with cars, and electric fences. You can also ask your parents to buy a hummingbird feeder, so each day, you can watch hummingbirds drink the sugar water, while you can also increase the populations of Broad-Tailed Hummingbirds! For the other threats… Well, I’m not sure. But either way, Broad-Tailed Hummingbirds deserve to be protected!"
+            ],
+            "photos": [
+                  {
+                        "src": "assets/birds/Broad_Tailed_Hummingbird-chicks.webp",
+                        "caption": "Broad tailed hummingbird with chicks"
+                  },
+                  {
+                        "src": "assets/birds/Broad_Tailed_Hummingbird-female.webp",
+                        "caption": "Female broad tailed hummingbird"
+                  },
+                  {
+                        "src": "assets/birds/Broad_Tailed_Hummingbird-male.webp",
+                        "caption": "Male broad tailed hummingbird"
+                  }
+            ],
+            "audio": {
+                  "src": "assets/sounds/broad-tailed-hummingbird-richard-e.-webster.mp3",
+                  "recordist": "Richard E. Webster"
+            },
+            "quizOverride": [
+                  {
+                        "q": "Which feeding behavior matches the Broad-Tailed Hummingbird?",
+                        "opts": [
+                              "Hunts quietly at night using soft wings and a facial disc to find prey by sound",
+                              "Forages from perches and uses tree cavities for nesting",
+                              "Runs, hops, stands, walks, vibrates its bill, sways its head, and flicks its wings to gather prey",
+                              "Hovers in place while drinking nectar from flowers or feeders"
+                        ],
+                        "a": 3
+                  },
+                  {
+                        "q": "Which habitat clue matches the Broad-Tailed Hummingbird?",
+                        "opts": [
+                              "Backyards, feeders, flowers, mountain meadows, and shrubby areas",
+                              "Wetlands, marshes, fields, and migration stopover areas",
+                              "Backyards, parks, lawns, forests, and neighborhoods",
+                              "Desert areas, open country, and warm dry habitats"
+                        ],
+                        "a": 0
+                  },
+                  {
+                        "q": "Which conservation problem is linked to the Broad-Tailed Hummingbird?",
+                        "opts": [
+                              "Climate change, window strikes, cars, and electric fences",
+                              "Pollutants, pesticides, selenium, disturbance at colonies, and water diversion",
+                              "Hunting, oil spills, fishing gear, and disturbance",
+                              "Removal of trees and dead nesting trees"
+                        ],
+                        "a": 0
+                  }
+            ],
+            "habIdx": 2
+      },
+      {
+            "id": 8,
+            "slug": "white-faced-ibis",
+            "name": "White-Faced Ibis",
+            "sci": "Plegadis chihi",
+            "group": "water",
+            "sizeClass": "Medium",
+            "status": "Uncommon",
+            "colorAnswer": "Glossy dark ibis with long curved bill",
+            "colorsDetail": "Glossy dark ibis with long curved bill; breeding adults show a white face border.",
+            "sizeDetail": "Length 18.1-22.1 in; wingspan about 37-39 in; bill 6-7 in.",
+            "statusDetail": "Not endangered; population increased about 2.8% per year from 1968 to 2017.",
+            "fact": "I went to Merced National Wildlife Refuge and saw the White-Faced Ibis.",
+            "article": [
+                  "I went to Merced National Wildlife Refuge and saw the White-Faced Ibis. White-Faced Ibises, like some other species of birds, collect found objects that sometimes include human things like cigarette lighters, empty shotgun shells, plastic dolls, and hair combs. Let's learn!",
+                  "The White-Faced Ibis wades in shallow waters, wetlands, or moist soil. They eat earthworms, crustaceans (particularly crayfish), spiders, snails, clams, leeches, and various insects and their larvae (including dragonflies, crickets, grasshoppers, midges, beetles, flies, and other bugs). They have sensitive beaks that help to find prey as well as scanning the water’s surface for prey they might see. They may also open their bills slightly and then swish their bills in the water, snatching anything they can. This method stirs up small aquatic creatures like insects, crustaceans, and small fish that might be moving in the water. They will probe the mud for insects hiding in the mud too. More about their bills is in the fourth paragraph.",
+                  "White-Faced Ibises have a length of approximately 18.1-22.1 inches (46-56 cm), a wingspan of about 37-39 inches (94-99 cm). Their bill is 6-7 inches long (15-18 cm). They weigh 1-1.2 pounds (450-525 grams).",
+                  "The White-Faced Ibis has a very sensitive beak (as mentioned before). Their beaks can detect movement through the water which tells the ibis how far, big, deep, and other things like that about whatever it sensed. Sensitive nerve endings are on the beaks, allowing them to do this. They may also probe in the mud under the water to look for anything the tip of their bills touch or sense. The probing method is mainly used for finding insect larvae.",
+                  "White-Faced Ibises are not endangered. In fact, their population increased about 2.8% per year between 1968 to 2017! Threats include pollutants and toxic materials such as heavy metals, organochlorine and other pesticides, and selenium has been found in eggs and adults which is bad for them. These materials have caused mortality or have reduced nesting success. Human disturbance at nesting colonies has caused abandonment, and the species is very sensitive to changes in both foraging and nesting areas. Diversion of water for irrigation and other uses has resulted in the abandonment of traditional colony sites in the U.S.",
+                  "To help these species survive, you can stop using pollutants and toxic materials and don’t disturb nesting colonies. Also, don’t irrigate water. Even though White-Faced Ibises are far from extinction, we should still protect this species!"
+            ],
+            "photos": [
+                  {
+                        "src": "assets/birds/White_Faced_Ibis-breeding01.webp",
+                        "caption": "Breeding white faced ibis"
+                  },
+                  {
+                        "src": "assets/birds/White_Faced_Ibis-breeding02.webp",
+                        "caption": "Breeding white faced ibis"
+                  },
+                  {
+                        "src": "assets/birds/White_Faced_Ibis-nonbreeding.webp",
+                        "caption": "Nonbreeding white faced ibis"
+                  }
+            ],
+            "audio": {
+                  "src": "assets/sounds/white-faced-ibis-richard-e.-webster.mp3",
+                  "recordist": "Richard E. Webster"
+            },
+            "quizOverride": [
+                  {
+                        "q": "What does the White-Faced Ibis eat?",
+                        "opts": [
+                              "Insects, small birds, lizards, rodents, and other small animals",
+                              "Different foods during different times of day, including fruit and invertebrates",
+                              "Earthworms, crayfish, spiders, snails, clams, leeches, insects, and larvae",
+                              "Insects, larvae, and food found by drilling in trees"
+                        ],
+                        "a": 2
+                  },
+                  {
+                        "q": "How does the White-Faced Ibis usually get food?",
+                        "opts": [
+                              "Stores acorns tightly in holes in a granary tree and drinks sap from drilled holes",
+                              "Looks and listens from dense cover, then bursts out quickly after prey",
+                              "Perches low, darts out to catch prey, then often returns to the same perch",
+                              "Probes mud and swishes its sensitive bill through shallow water"
+                        ],
+                        "a": 3
+                  },
+                  {
+                        "q": "Which threat affects the White-Faced Ibis?",
+                        "opts": [
+                              "Pollutants, pesticides, selenium, disturbance at colonies, and water diversion",
+                              "Loss of nesting trees, habitat disturbance, and oil spills",
+                              "Habitat loss, disturbance, and wetland changes",
+                              "Collisions, grazing near nesting areas, and Brown-headed Cowbird parasitism"
+                        ],
+                        "a": 0
+                  }
+            ],
+            "habIdx": 0
+      },
+      {
+            "id": 9,
+            "slug": "stellers-jay",
+            "name": "Steller’s Jay",
+            "sci": "Cyanocitta stelleri",
+            "group": "song",
+            "sizeClass": "Medium",
+            "status": "Common",
+            "colorAnswer": "Blue crest with long black-and-blue feathers",
+            "colorsDetail": "Blue crest with long black-and-blue feathers.",
+            "sizeDetail": "Length 12-13.5 in; weight 3.5-4.9 oz; wingspan 17.3-19 in.",
+            "statusDetail": "Not endangered and quite common.",
+            "fact": "Did you know that Steller’s Jays are probably one of the most commonly misspelled names in birdwatching?",
+            "article": [
+                  "I like the Steller’s Jay because I think it is very pretty. With its blue crest and long black and blue feathers in a neat pattern, this species has a natural grace. When it flies, it looks especially graceful, though its walking can look a little clumsy.",
+                  "The Steller’s Jay forages around and eats insects, seeds, berries, nuts, small animals, eggs, and nestlings. It has also been found eating trash and unguarded picnic items. As an omnivore, it also eats peanuts, acorns, pinyon pine seeds, sunflower seeds, and suet from feeders. For winter preparations, the Steller’s Jay buries pinyon pine seeds and acorns along with other nuts in the ground to dig up afterwards.",
+                  "Steller’s Jays are 30-34 cm (12-13.5 in) long, weigh 100-140 g (3.5-4.9 oz), and have a wingspan of 44-48 cm (17.3-19 in).",
+                  "Did you know that Steller’s Jays are probably one of the most commonly misspelled names in birdwatching? Looking at the streaks of black and blue, you might think that their name comes from “stellar.” The true reason behind their name is that this species was discovered on an Alaskan island in 1741 by Georg Steller. Scientists later named it after him.",
+                  "Steller’s Jays are not endangered and are quite common. Threats include habitat loss due to development, collisions with glass, poisoning from pesticides, predators like cats and large raptors, and competition for food with invasive species.",
+                  "People can help Steller’s Jays by protecting habitat, using less glass or bird-safe windows, avoiding pesticides, and keeping pet cats watched or indoors."
+            ],
+            "photos": [
+                  {
+                        "src": "assets/birds/Steller's_Jay-adult01.webp",
+                        "caption": "Adult steller's jay"
+                  },
+                  {
+                        "src": "assets/birds/Steller's_Jay-adult02.webp",
+                        "caption": "Adult steller's jay"
+                  },
+                  {
+                        "src": "assets/birds/Steller's_Jay-adult03 7.56.56 AM copy.webp",
+                        "caption": "Adult steller's jay"
+                  }
+            ],
+            "audio": {
+                  "src": "assets/sounds/stellers-jay-jonathon-jongsma.ogg",
+                  "recordist": "Jonathon Jongsma"
+            },
+            "quizOverride": [
+                  {
+                        "q": "Where would you most expect to find the Steller’s Jay?",
+                        "opts": [
+                              "Forests, wooded parks, picnic areas, and neighborhoods near trees",
+                              "Shallow wetlands and salt ponds",
+                              "Backyards, feeders, flowers, mountain meadows, and shrubby areas",
+                              "Open country, grasslands, shrubs, and fence lines"
+                        ],
+                        "a": 0
+                  },
+                  {
+                        "q": "Which fun fact belongs to the Steller’s Jay?",
+                        "opts": [
+                              "Looks like a songbird but hunts like a tiny raptor",
+                              "Uses a “seet” warning call when Brown-headed Cowbirds are nearby",
+                              "Its pouch can hold up to 3 gallons of water",
+                              "Named after Georg Steller, not the word “stellar”"
+                        ],
+                        "a": 3
+                  },
+                  {
+                        "q": "Which population fact matches the Steller’s Jay?",
+                        "opts": [
+                              "Quite common but declined about 0.9% per year from 1966 to 2019",
+                              "Common throughout the Bay Area",
+                              "Pretty common desert species",
+                              "Not endangered and quite common"
+                        ],
+                        "a": 3
+                  }
+            ],
+            "habIdx": 2
+      },
+      {
+            "id": 10,
+            "slug": "california-scrub-jay",
+            "name": "California Scrub-Jay",
+            "sci": "Aphelocoma californica",
+            "group": "song",
+            "sizeClass": "Medium",
+            "status": "Common",
+            "colorAnswer": "Blue, gray, and white jay with a long tail",
+            "colorsDetail": "Blue, gray, and white jay with a long tail.",
+            "sizeDetail": "Length 11-12 in; weight 2.8-3.5 oz; wingspan about 15 in.",
+            "statusDetail": "Not endangered and quite common.",
+            "fact": "California Scrub-Jays can crack acorns by holding them with their feet and using both parts of the bill.",
+            "article": [
+                  "I chose the California Scrub-Jay because it visits my bird feeder in the backyard quite often. These birds can be very noisy. I once woke up to one perched on the electrical wire in front of my house, screeching so loudly that I could hear it through my closed bedroom window.",
+                  "California Scrub-Jays eat by hopping around on the ground and foraging. They are omnivores and eat mostly insects and fruit during spring and summer, but nuts and seeds during the winter. Other foods include acorns, grass seeds, sunflower seeds, peanuts, cultivated corn, cherries, walnuts, and almonds. To crack an acorn, a California Scrub-Jay holds the nut between its feet, pecks at it with its bill, then uses the lower bill and upper bill to split the crack wide enough to fish out the inside and eat it.",
+                  "I have seen California Scrub-Jays eat from the feeder and in the wild. They look funny digging through the nuts on the feeder and spilling food everywhere while pecking and prodding at it.",
+                  "California Scrub-Jays are 11-12 inches (28-30 cm) long, weigh 2.8-3.5 ounces (70-100 g), and have a wingspan of about 15 inches (38 cm).",
+                  "California Scrub-Jays may be found hopping around or standing on a Mule Deer’s back. When they do this, they are feeding on ticks and other parasites in the fur of the deer. Most of the time, the deer seems to appreciate the help.",
+                  "California Scrub-Jays are not endangered and are quite common. Threats include predators like hawks, cats, owls, squirrels, raccoons, and snakes; habitat loss due to urbanization; collisions with glass; pesticides; domestic cats; climate change; wildfires; heatwaves; and diseases like West Nile Virus.",
+                  "People can help California Scrub-Jays by protecting habitat, using less glass or bird-safe windows, avoiding pesticides, watching pet cats outdoors, preventing wildfires, and supporting healthy oak woodland habitats."
+            ],
+            "photos": [
+                  {
+                        "src": "assets/birds/California_Scrub_Jay-adult01.webp",
+                        "caption": "Adult california scrub jay"
+                  },
+                  {
+                        "src": "assets/birds/California_Scrub_Jay-adult02.webp",
+                        "caption": "Adult california scrub jay"
+                  },
+                  {
+                        "src": "assets/birds/California_Scrub_Jay-juvenile.webp",
+                        "caption": "Juvenile california scrub jay"
+                  }
+            ],
+            "audio": {
+                  "src": "assets/sounds/california-scrub-jay-frank-schulenburg.ogg",
+                  "recordist": "Frank Schulenburg"
+            },
+            "quizOverride": [
+                  {
+                        "q": "Which size fact matches the California Scrub-Jay?",
+                        "opts": [
+                              "Length 18.1-22.1 in; wingspan about 37-39 in; bill 6-7 in.",
+                              "Males 14.6-15.3 in; females 16.5-17.7 in; wingspan 24.4-35.4 in.",
+                              "Length 11-12 in; weight 2.8-3.5 oz; wingspan about 15 in.",
+                              "Small songbird; see essay for behavior and nesting details."
+                        ],
+                        "a": 2
+                  },
+                  {
+                        "q": "Which color clue describes the California Scrub-Jay?",
+                        "opts": [
+                              "Iridescent green above, white chest, greenish or buffy flanks; males have a rose-magenta throat.",
+                              "Gray crown, light gray underparts, black wings with white flashes, black tail edges, and thick black mask.",
+                              "Blue, gray, and white jay with a long tail.",
+                              "Mostly white with black flight feathers and a large orange bill."
+                        ],
+                        "a": 2
+                  },
+                  {
+                        "q": "Which conservation fact matches the California Scrub-Jay?",
+                        "opts": [
+                              "Pretty common desert species",
+                              "Common today after earlier feather-trade declines",
+                              "Low concern",
+                              "Not endangered and quite common"
+                        ],
+                        "a": 3
+                  }
+            ],
+            "habIdx": 2
+      },
+      {
+            "id": 11,
+            "slug": "american-kestrel",
+            "name": "American Kestrel",
+            "sci": "Falco sparverius",
+            "group": "raptor",
+            "sizeClass": "Small",
+            "status": "Common",
+            "colorAnswer": "Small falcon with rusty back/tail, blue-gray wings on males, and strong facial markings",
+            "colorsDetail": "Small falcon with rusty back/tail, blue-gray wings on males, and strong facial markings.",
+            "sizeDetail": "Length 8.7-12.2 in; wingspan 20-24 in.",
+            "statusDetail": "Still quite common, but declined about 53% from 1966 to 2019.",
+            "fact": "Did you know that American Kestrels are one of the smallest birds of prey?",
+            "article": [
+                  "I went to Merced National Wildlife Refuge and saw an American Kestrel. Did you know that American Kestrels are one of the smallest birds of prey? Well, it can be tough. Despite their fierce lifestyle, they end up as prey for larger birds such as American Goshawks, Red-tailed Hawks, Barn Owls, American Crows, and Sharp-shinned and Cooper’s Hawks, as well as rat snakes, corn snakes, and even fire ants! But they are still quite common. Let’s learn some more!",
+                  "American Kestrels usually eat during the day. They can be found scanning for prey from the same perch for the entire day or changing perches every few minutes. They will then pounce on the prey and grab it with one or both talons. If its prey is small, it will finish it on the ground. But they will carry bigger prey back to the perch. American kestrels mostly eat invertebrates, as well as small rodents and birds. Common foods include grasshoppers, cicadas, beetles, dragonflies, scorpions, spiders, butterflies, moths, voles, mice, shrews, bats, and small songbirds. American Kestrels also sometimes eat small snakes, lizards, and frogs. They might even take larger prey such as red squirrels and Northern Flickers!",
+                  "American Kestrels are 8.7 to 12.2 inches (22 to 31 cm) in length with a wingspan of 20 to 24 inches (51 to 61 cm). Their size is similar to a Sharp-shinned Hawk, though it has a longer tail and broader wings. The American Kestrel is often mixed up with the Southeastern American Kestrel. The Southeastern American Kestrel is the smallest falcon in the United States, slightly larger than a Florida Scrub-Jay and slightly smaller than a Mourning Dove. Some biologists have reported that male Southeastern American Kestrels have fewer spots and markings on the underparts (breast and belly) than do northern male kestrels, but this is highly variable.",
+                  "One interesting fact about the American Kestrel is that these birds can see ultraviolet light. This allows kestrels to make out the trails of urine that voles, a common prey mammal, leave as they run on the ground. These bright paths may highlight the way to a meal like neon trails that say ‘HERE IS YOUR DINNER!’.",
+                  "The American Kestrel is the most widespread falcon in the continent of North America even though its population declined by 1.41% per year for a total decline of about 53% between 1966 and 2019. If current trends continue, American Kestrels will lose another 50% of their population by 2075. Threats include continued clearing of land and felling of the standing dead trees these birds depend on for their nest sites. The American Kestrel is also losing prey and nesting cavities to “clean” farming practices, which remove hedgerows, trees, and brush. Another threat to these birds is exposure to pesticides and other pollutants, which can reduce clutch sizes and hatching success. For kestrels in North America, the larger problem with pesticides is that they destroy the insects, spiders, and other prey on which the birds eat.",
+                  "So to help keep these birds thriving, please don’t clear the land of trees, hedgerows, and brush. Also try not to use pesticides or other pollutants for we don’t want the prediction to be true and lose another 50% of the American Kestrels population!"
+            ],
+            "photos": [
+                  {
+                        "src": "assets/birds/American_Kestrel-juvenile.webp",
+                        "caption": "Juvenile american kestrel"
+                  },
+                  {
+                        "src": "assets/birds/American_Kestrel-male01.webp",
+                        "caption": "Male american kestrel"
+                  },
+                  {
+                        "src": "assets/birds/American_Kestrel-male02.webp",
+                        "caption": "Male american kestrel"
+                  }
+            ],
+            "audio": {
+                  "src": "assets/sounds/american-kestrel-jonathon-jongsma.mp3",
+                  "recordist": "Jonathon Jongsma"
+            },
+            "quizOverride": [
+                  {
+                        "q": "Which feeding behavior matches the American Kestrel?",
+                        "opts": [
+                              "Scans from a perch and pounces on prey with one or both talons",
+                              "Forages and stores nuts or seeds in the ground for winter",
+                              "Swims in groups and herds fish instead of diving like Brown Pelicans",
+                              "Runs, hops, stands, walks, vibrates its bill, sways its head, and flicks its wings to gather prey"
+                        ],
+                        "a": 0
+                  },
+                  {
+                        "q": "Which habitat clue matches the American Kestrel?",
+                        "opts": [
+                              "Tree cavities, open woodlands, parks, and areas with dead trees",
+                              "Open fields, perches, farmland edges, and places with nesting cavities",
+                              "Coastal waters, rocky nesting cliffs, and ocean colonies",
+                              "Marshes, bay edges, lakes, creeks, and shorelines"
+                        ],
+                        "a": 1
+                  },
+                  {
+                        "q": "Which conservation problem is linked to the American Kestrel?",
+                        "opts": [
+                              "Hunting, oil spills, fishing gear, and disturbance",
+                              "Pollutants, pesticides, selenium, disturbance at colonies, and water diversion",
+                              "Loss of nest sites, clean farming, pesticides, and prey loss",
+                              "Grassland conversion, agriculture, housing, pesticides, and invasive plants"
+                        ],
+                        "a": 2
+                  }
+            ],
+            "habIdx": 1
+      },
+      {
+            "id": 12,
+            "slug": "loggerhead-shrike",
+            "name": "Loggerhead Shrike",
+            "sci": "Lanius ludovicianus",
+            "group": "raptor",
+            "sizeClass": "Small",
+            "status": "Protected",
+            "colorAnswer": "Gray crown, light gray underparts, black wings with white flashes, black tail edges, and thick black mask",
+            "colorsDetail": "Gray crown, light gray underparts, black wings with white flashes, black tail edges, and thick black mask.",
+            "sizeDetail": "Length about 8-10 in; wingspan about 13 in.",
+            "statusDetail": "Not endangered, but populations have faced serious declines.",
+            "fact": "I want to share an interesting fact about the Loggerhead Shrike to you.",
+            "article": [
+                  "I went to Merced National Wildlife Refuge and saw the Loggerhead Shrike. I want to tell you about this interesting (well, at least I think it’s interesting) bird because even though it looks like a songbird, it’s actually a small raptor! This bird also has a very unique eating method. That’s another reason why I like these birds.",
+                  "Loggerhead Shrikes eat in a way that you will think it’s one of a kind. They sit on tall shrubs, posts, or little trees to look for their prey. Then they glide down to the ground, capturing their prey. But the interesting part is when they pin their prey on thorns, barbed wires, or sharp twigs. I think it is interesting because since their talons are not strong enough, they do that so that its prey can die by itself. Loggerhead Shrikes feed on insects, arthropods, amphibians, small mammals, reptiles, and birds. In winter, they mostly eat vertebrates. Those include lizards, snakes, frogs, turtles, sparrows, goldfinches, ground squirrels, voles, mice, and shrews.",
+                  "Loggerhead Shrikes have gray crowns, light gray underparts, white flashes in their black wings, a black tail with a thin line of white at the very side, a thick black “mask” around their eyes on their white face, a hooked black bill, and a white belly. Loggerhead Shrikes have a length of about 8 in (20 cm) to 10 in (25 cm) and their wingspan is 13 in (33 cm).",
+                  "I want to share an interesting fact about the Loggerhead Shrike to you. They can carry prey as big as themselves! That’s big. Anyways. That means that they can carry prey with a length of 9 in (23 cm)! They carry the big prey they catch in their talons and they hold the smaller prey in their bills.",
+                  "The biggest threat to a Loggerhead Shrike is habitat loss. Other threats include collision with vehicles, urban development, conversion of hayfields and pastureland, decimation of hedgerows, and altering of the populations of their prey by livestock grazing.",
+                  "So even though Loggerhead Shrikes are not endangered, (though from the 1940s to 2019, they got onto the endangered species list) we still need to help them to keep them alive. So here are some ways you can help them: stop collision with vehicles, stop urban development, don’t convert hayfields or pasturelands, stop the decimation of hedgerows, and don’t alter populations of their prey. So it’s our job as humans, to keep these incredible birds well protected if we still want to admire them!"
+            ],
+            "photos": [
+                  {
+                        "src": "assets/birds/Loggerhead_Shrike-adult01.webp",
+                        "caption": "Adult loggerhead shrike"
+                  },
+                  {
+                        "src": "assets/birds/Loggerhead_Shrike-adult02.webp",
+                        "caption": "Adult loggerhead shrike"
+                  },
+                  {
+                        "src": "assets/birds/Loggerhead_Shrike-adult03.webp",
+                        "caption": "Adult loggerhead shrike"
+                  }
+            ],
+            "audio": {
+                  "src": "assets/sounds/loggerhead-shrike-manuel-grosselet.mp3",
+                  "recordist": "Manuel Grosselet"
+            },
+            "quizOverride": [
+                  {
+                        "q": "What does the Loggerhead Shrike eat?",
+                        "opts": [
+                              "Beetles, ants, cutworms, grasshoppers, crickets, grain, and weed seeds",
+                              "Insects, small birds, lizards, rodents, and other small animals",
+                              "Fish, reptiles, small mammals, amphibians, insects, and small birds",
+                              "Small fish and shrimp"
+                        ],
+                        "a": 1
+                  },
+                  {
+                        "q": "How does the Loggerhead Shrike usually get food?",
+                        "opts": [
+                              "Perches low, darts out to catch prey, then often returns to the same perch",
+                              "Impales prey on thorns or barbed wire because its talons are not very strong",
+                              "Stands very still in shallow water before snapping prey with its bill",
+                              "Forages on the ground in flocks in open fields"
+                        ],
+                        "a": 1
+                  },
+                  {
+                        "q": "Which threat affects the Loggerhead Shrike?",
+                        "opts": [
+                              "Hunting, oil spills, fishing gear, and disturbance",
+                              "Predators, habitat loss, glass collisions, pesticides, cats, climate change, wildfires, and disease",
+                              "Collisions, pesticides, cats, and habitat problems",
+                              "Habitat loss, pesticides, collisions, and population decline"
+                        ],
+                        "a": 3
+                  }
+            ],
+            "habIdx": 1
+      },
+      {
+            "id": 13,
+            "slug": "western-meadowlark",
+            "name": "Western Meadowlark",
+            "sci": "Sturnella neglecta",
+            "group": "song",
+            "sizeClass": "Small",
+            "status": "Common",
+            "colorAnswer": "Yellow underparts with a black V on the chest and brown streaked upperparts",
+            "colorsDetail": "Yellow underparts with a black V on the chest and brown streaked upperparts.",
+            "sizeDetail": "Length 6-10 in; wingspan about 16 in; weight 3-4 oz.",
+            "statusDetail": "Quite common, but breeding populations declined about 0.9% each year from 1966 to 2019.",
+            "fact": "When breeding, a male usually gets two mates at the same time!",
+            "article": [
+                  "I went to Merced National Wildlife Refuge and saw the Western Meadowlark. They are found in the Bay Area, most likely on grasslands or dry grassy areas. They are also found in open meadows. Before I introduce the Western Meadowlarks, I will let you guess three things. Number one: In how many states is the Western Meadowlark the state bird?",
+                  "A: One",
+                  "B: Two",
+                  "C: Three",
+                  "D: Four",
+                  "E: Five",
+                  "F: Six",
+                  "G: Seven",
+                  "H: Eight",
+                  "The correct answer is F. The Western Meadowlark is the state bird for six states! Let’s try another one.",
+                  "Number two: In which six states is the Western Meadowlark the state bird?",
+                  "A: Colorado, Arizona, Oregon, Texas, Missouri, and North Carolina",
+                  "B: Nebraska, Washington, Montana, Tennessee, Georgia, and Utah",
+                  "C: Kansas, Montana, Nebraska, North Dakota, Oregon, and Wyoming",
+                  "D: South Dakota, Arkansas, Colorado, Minnesota, New Mexico, and Iowa",
+                  "E: Nevada, Kansas, Oklahoma, Virginia, Indiana, and Pennsylvania",
+                  "F: Idaho, Oregon, Michigan, Louisiana, New Jersey, and Maine",
+                  "The correct answer is C. The Western Meadowlark is the state bird in Kansas, Montana, Nebraska, North Dakota, Oregon, and Wyoming. Let’s try one last one!",
+                  "Number three: What is the only bird that beats the Western Meadowlark in the number of states in which it is the state bird and how many states is it state bird in?",
+                  "A: Northern Cardinal; 7",
+                  "B: Yellow-Breasted Chat; 8",
+                  "C: American Goldfinch; 7",
+                  "D: Evening Grosbeak; 9",
+                  "The correct answer is A. The only bird that is the state bird to a greater number of states than the Western Meadowlark is the Northern Cardinal. It beats the Western Meadowlark by one state! Now that you know some fun facts about the Western Meadowlark, let’s dig in!",
+                  "Unlike most of the birds you have learned about in this chapter book, Western Meadowlarks eat in flocks. They forage ground in open fields, pecking the soil for insects, grain, and weed seeds. They also fly in flocks. They take off with quail-like bursts, flying with stiff wing beats, and only for short distances above a grassland, prairie, or meadow. Western Meadowlarks eat beetles, ants, cutworms, grasshoppers, and crickets. They also eat grain and weed seeds (as mentioned in the beginning of this paragraph). Western Meadowlarks have a lifespan of five to eight years. They have a length of 6 to 10 inches, and a wingspan of 16 inches. Their weight is 3 to 4 ounces.",
+                  "An interesting fact about Western Meadowlarks is that when breeding, a male usually gets two mates at the same time! The female meadowlarks do all the incubating and brooding, as well as most of the feeding the young chicks.",
+                  "Although quite common, the breeding populations of Western Meadowlarks have declined about 0.9% each year between 1966 to 2019. Threats include the changing of grassland breeding and wintering habitat used for housing and agriculture, pesticides, and habitat degradation caused by invasive plant species.",
+                  "To help Western Meadowlarks, you could use pesticides less, or better, stop using them! You could also get rid of invasive plant species and stop converting grasslands. If this bird goes extinct (though it currently is not close to extinction at all), then six states (Kansas, Montana, Nebraska, North Dakota, Oregon, and Wyoming) would have to change their state bird! So help keep Western Meadowlarks safe that won’t have to happen."
+            ],
+            "photos": [
+                  {
+                        "src": "assets/birds/Western-Meadowlark-adult01.webp",
+                        "caption": "Adult western meadowlark"
+                  },
+                  {
+                        "src": "assets/birds/Western_Meadowlark-adult02.webp",
+                        "caption": "Adult western meadowlark"
+                  },
+                  {
+                        "src": "assets/birds/Western_Meadowlark-juvenile.webp",
+                        "caption": "Juvenile western meadowlark"
+                  }
+            ],
+            "audio": {
+                  "src": "assets/sounds/western-meadowlark-peter-wilton.mp3",
+                  "recordist": "Peter Wilton"
+            },
+            "quizOverride": [
+                  {
+                        "q": "Where would you most expect to find the Western Meadowlark?",
+                        "opts": [
+                              "Shrubs, small trees, creekside willow areas, and places near water",
+                              "Wooded neighborhoods, parks, and dense cover",
+                              "Grasslands, dry grassy areas, open meadows, prairies, and fields",
+                              "Wetlands, moist soil, marshes, and shallow water"
+                        ],
+                        "a": 2
+                  },
+                  {
+                        "q": "Which fun fact belongs to the Western Meadowlark?",
+                        "opts": [
+                              "Chicks can walk and swim about 8 hours after hatching",
+                              "Hummingbirds are the only birds that can fly in place",
+                              "It is the state bird of six states",
+                              "Breeding plumage turns rusty orange from April to June"
+                        ],
+                        "a": 2
+                  },
+                  {
+                        "q": "Which population fact matches the Western Meadowlark?",
+                        "opts": [
+                              "Recovered from DDT-era declines and is now low concern",
+                              "Pretty common and increased from 1966 to 2019",
+                              "Not endangered but has suffered major declines",
+                              "Quite common but declined about 0.9% per year from 1966 to 2019"
+                        ],
+                        "a": 3
+                  }
+            ],
+            "habIdx": 2
+      },
+      {
+            "id": 14,
+            "slug": "great-horned-owl",
+            "name": "Great-Horned Owl",
+            "sci": "Bubo virginianus",
+            "group": "raptor",
+            "sizeClass": "Large",
+            "status": "Common",
+            "colorAnswer": "Mottled gray-brown with reddish-brown face and a white throat patch",
+            "colorsDetail": "Mottled gray-brown with reddish-brown face and a white throat patch.",
+            "sizeDetail": "Length 18.1-24.8 in; wingspan 39.8-57.1 in; weight 32.1-88.2 oz.",
+            "statusDetail": "Very common around the world and lives in the Bay Area.",
+            "fact": "Another interesting fact that only Great-Horned Owls share with all the other owl species is how they can turn their head almost all the way around!",
+            "article": [
+                  "I went to the California Raptor Center and saw the Great-Horned Owls. The California Raptor Center is not in the Bay Area, but Great-Horned Owls live in the Bay Area, and they are very common around the world. Great-Horned Owls are found on every continent except for Antarctica. They are one of the most common owls around the world. The biggest reason why I like these birds is about how silently they fly, like all owl species. The soft feathers on their wings creates less turbulence, which softens the sound. Then very soft feathers under their wings further muffles the sound. This special adaptation that other birds don’t have helps them hunt during the night without prey suspecting any danger.",
+                  "Great-Horned Owls have a pretty unique way of eating. Also usually hunting during the night, they will seldom hunt in daylight. After they find the prey from a high perch, they will chase the prey over woodlands, meadows, wetlands, open water, or a lot of other habitats. They might also walk along the ground to chase their prey around bushes and other obstacles. During the night, they will just swoop down from a tree and catch their prey in their talons. Great-Horned Owls eat tiny rodents, scorpions, skunks, geese, hares, and raptors. They mostly eat birds and mammals including rabbits, mice, and American Coots. But they may also eat voles, moles, shrews, rats, gophers, chipmunks, squirrels, woodchucks, marmots, prairie dogs, bats, skunks, house cats, porcupines, ducks, loons, mergansers, grebes, rails, owls, hawks, crows, ravens, doves, and starlings. They supplement their diet with reptiles, insects, fish, invertebrates, and sometimes carrion.",
+                  "Great-Horned Owls have very good hearing. Their ears are hidden behind feathers on their face. We call those feathers the facial disc. As a sound comes towards them, it will hit their facial disc. The feathers on the facial disk face towards their ears. So the sound will slide off the feathers right into their ears, which makes their hearing much better. It also helps focus on the sound and not hear all kinds of other sounds like the wind blowing, or leaves rustling, just to name a few. This unique adaptation helps them hear from underground and they are able to swoop down and capture prey as soon as it gets up above the surface of the ground. But if they need to, they may dig, following the sound to capture their prey.",
+                  "Another interesting fact that only Great-Horned Owls share with all the other owl species is how they can turn their head almost all the way around! They need to do that because they can’t move their pupils. So in order to look around, they have to turn their head. And amazingly, when they turned their head around their neck bones don’t break. If you even tried to turn your head around like an owl… your neck would definitely crack, so I don’t suggest trying that. Either way it’s another interesting thing that only owls can do. All owls have more neck bones than us to help prevent their bones from cracking when they turn their heads. This adaptation might not be the best for capturing their prey, but it sure is helpful when they need to find their food.",
+                  "In the mid-twenties, Great- Horned Owls were hunted, and unfortunately, some illegal hunting still remains today. They can also threaten other bird species including Peregrine Falcons and Spotted Owls, because of their prowess as predators. Great-Horned Owls are not endangered. There is only one thing you need to do to keep them thriving on planet Earth, which is not to hunt them. They are a unique species and have many interesting adaptations that help them."
+            ],
+            "photos": [
+                  {
+                        "src": "assets/birds/Great_Horned_Owl-adult.webp",
+                        "caption": "Adult great horned owl"
+                  },
+                  {
+                        "src": "assets/birds/Great_Horned_Owl-fledglings.webp",
+                        "caption": "Great horned owl fledglings"
+                  },
+                  {
+                        "src": "assets/birds/Great_Horned_Owl-juvenile.webp",
+                        "caption": "Juvenile great horned owl"
+                  }
+            ],
+            "audio": {
+                  "src": "assets/sounds/great-horned-owl-Michael-and-Katie-LaTour.mp3",
+                  "recordist": "Michael and Katie LaTour"
+            },
+            "quizOverride": [
+                  {
+                        "q": "Which feeding behavior matches the Great-Horned Owl?",
+                        "opts": [
+                              "Hops backward to double-scratch leaves, then pounces forward for food",
+                              "Hunts quietly at night using soft wings and a facial disc to find prey by sound",
+                              "Forages from perches and uses tree cavities for nesting",
+                              "Stands very still in shallow water before snapping prey with its bill"
+                        ],
+                        "a": 1
+                  },
+                  {
+                        "q": "Which habitat clue matches the Great-Horned Owl?",
+                        "opts": [
+                              "Forests, deserts, parks, suburbs, and many Bay Area habitats",
+                              "Open country, roadsides, fields, hills, and areas with rising warm air",
+                              "Shrubs, bushes, tundra, backyards, and Bay Area winter/spring habitats",
+                              "Open fields, perches, farmland edges, and places with nesting cavities"
+                        ],
+                        "a": 0
+                  },
+                  {
+                        "q": "Which conservation problem is linked to the Great-Horned Owl?",
+                        "opts": [
+                              "Loss of nesting trees, habitat disturbance, and oil spills",
+                              "Collisions, rodenticides, habitat disturbance, and human conflict",
+                              "Hunting, oil spills, fishing gear, and disturbance",
+                              "Loss of oak woodland habitat and nesting cavities"
+                        ],
+                        "a": 1
+                  }
+            ],
+            "habIdx": 1
+      },
+      {
+            "id": 15,
+            "slug": "american-white-pelican",
+            "name": "American White Pelican",
+            "sci": "Pelecanus erythrorhynchos",
+            "group": "water",
+            "sizeClass": "Large",
+            "status": "Uncommon",
+            "colorAnswer": "Mostly white with black flight feathers and a large orange bill",
+            "colorsDetail": "Mostly white with black flight feathers and a large orange bill.",
+            "sizeDetail": "Length about 4 ft; wingspan about 9 ft.",
+            "statusDetail": "Low concern.",
+            "fact": "I like them because of their unique way of eating, which is also different from their cousin, the Brown Pelican!",
+            "article": [
+                  "I went to Baylands Nature Preserve and saw the American White Pelicans. I like them because of their unique way of eating, which is also different from their cousin, the Brown Pelican! American White Pelicans can hold up to 3 gallons of water in their pouch! I think that’s very interesting.",
+                  "The American White Pelican eats in a very unique way. Instead of diving like the Brown Pelican, they gather in flocks and herd the fish to the shallow waters where they do not have to dive. Then they fold their wings up so they do not get wet, and their head goes below and above, below and above, below and above the surface of the water, scooping up little fish. Once they fill their pouch, they contract the pouch muscles to drain out all the water before swallowing the prey whole.",
+                  "American White Pelicans have yellow-orange beaks, a white body, and white and black underwings. Their feet are also yellow-orange, though slightly more orange than their beaks. They also have a thin circle of yellow around their eyes, which connects to their beaks. The American White Pelican has a length of about 4 feet and a wingspan of approximately 9 feet.",
+                  "American White Pelican chicks can crawl when they are 1 to 2 weeks old! Once they are 3 weeks old, they can walk without their body touching the ground and swim as soon as they touch water. The chicks that are older go on to learn how to run, flapping their wings while running, and then when they are 9 to 10 weeks of age, flying.",
+                  "One of the major threats to the American White Pelicans is humans foraging their breeding grounds. Since they depend on shallow waters to catch their prey, flooding has been a problem for them too. Another threat is pollution. Littering can also affect them.",
+                  "American White Pelicans are in low concern, though we still have to help them. So, one tip is never, ever feed them, or really just don’t feed wildlife. If you do, then they will come to where humans live which makes it easier for them to get hurt because there is more litter there. Well, that also means don’t litter! Wind, rain, and water can bring litter all over the place, and animals could get really injured if they get stuck. People should also stop polluting. Pollution has been affecting all wildlife, not only the American White Pelican. This will help all animals and maybe even some plants!"
+            ],
+            "photos": [
+                  {
+                        "src": "assets/birds/American_White_Pelican-adult02.webp",
+                        "caption": "Adult american white pelican"
+                  },
+                  {
+                        "src": "assets/birds/American_White_Pelican-adult03.webp",
+                        "caption": "Adult american white pelican"
+                  },
+                  {
+                        "src": "assets/birds/American_White_Pelicans-adults01.webp",
+                        "caption": "American white pelican adults"
+                  }
+            ],
+            "audio": {
+                  "src": "assets/sounds/american-white-pelican-andrew-spencer.mp3",
+                  "recordist": "Andrew Spencer"
+            },
+            "quizOverride": [
+                  {
+                        "q": "What does the American White Pelican eat?",
+                        "opts": [
+                              "Fish, frogs, crustaceans, insects, and worms",
+                              "Fish caught in shallow water",
+                              "Insects, fruit, acorns, seeds, peanuts, corn, cherries, walnuts, and almonds",
+                              "Insects, small birds, lizards, rodents, and other small animals"
+                        ],
+                        "a": 1
+                  },
+                  {
+                        "q": "How does the American White Pelican usually get food?",
+                        "opts": [
+                              "Forages from perches and uses tree cavities for nesting",
+                              "Perches low, darts out to catch prey, then often returns to the same perch",
+                              "Returns to the same perch after trying to catch prey",
+                              "Swims in groups and herds fish instead of diving like Brown Pelicans"
+                        ],
+                        "a": 3
+                  },
+                  {
+                        "q": "Which threat affects the American White Pelican?",
+                        "opts": [
+                              "Loss of oak woodland habitat and nesting cavities",
+                              "Hunting, oil spills, fishing gear, and disturbance",
+                              "Removal of trees and dead nesting trees",
+                              "Human disturbance, habitat loss, and water quality problems"
+                        ],
+                        "a": 3
+                  }
+            ],
+            "habIdx": 0
+      },
+      {
+            "id": 16,
+            "slug": "american-robin",
+            "name": "American Robin",
+            "sci": "Turdus migratorius",
+            "group": "song",
+            "sizeClass": "Small",
+            "status": "Common",
+            "colorAnswer": "Gray-brown upperparts, warm orange breast, dark head, and white eye arcs",
+            "colorsDetail": "Gray-brown upperparts, warm orange breast, dark head, and white eye arcs.",
+            "sizeDetail": "Length 7.9-11 in.",
+            "statusDetail": "Not endangered; global breeding population about 370 million.",
+            "fact": "Their roosts can be HUGE.",
+            "article": [
+                  "I’ve seen American Robins in my backyard. They usually stay on the lawn, looking for worms to eat. Before we learn more about this species, a fun fact is that these robins eat different foods during different times of the day! They eat earthworms in the morning and more fruit later in the day. Because they feed on lawns a lot, they are vulnerable to pesticide poisoning. Because of this, they can easily indicate when there is chemical pollution. Let’s learn some more!",
+                  "American Robins run a few steps and then stop abruptly when foraging on the ground. When in the long grass, they will hop or fly slightly above the ground with slow, powerful wingbeats. They usually stare motionlessly at the ground with their head cocked to one side. This method is how they find most worms. The robins may also fight over worms that others have caught so that they don’t have to catch one themselves. American Robins eat earthworms and insects as well as some snails mainly during the spring and summer. They have rarely been found eating shrews, small snakes, and aquatic insects. The fruits they eat include chokecherries, hawthorn, dogwood, sumac fruits, and juniper berries. Some scientists think that the robins choose which fruits to eat by finding the ones with bugs in it.",
+                  "Adults are 7.9-11 inches (20-28 centimeters) long. They weigh 2.7-3 ounces (77-85 grams), about the same weight as three AA batteries. Their wingspan ranges from 12.2-15.8 inches (31-40 centimeters) in length. Their size is similar to a Spotted Towhee or a Red-Winged Blackbird.",
+                  "An interesting fact about the American Robin is that their roosts can be HUGE. During the winter, there can be a quarter-million robins in just one roost! In summer, while the females sleep in their nests, the males gather together at the roost. When the robin chicks become independent, they join the males. But the female adults only join the males and go to the roosts after they finish nesting.",
+                  "American Robins are not endangered. Their population increased by 0.13% each year from 1966 to 2019! Their global breeding population is at about 370 million. Threats include pesticides (since they often forage on lawns) and outdoor cats eating them. Others include collisions with windows, communication towers, cars, and other common hazards.",
+                  "Even though American Robins are at low concern, we still have to protect them if we want them to keep thriving! You can help by using less pesticides and making sure your cat -if you have one- doesn’t kill an American Robin (or even better, any bird) when it is let outside. Ways to help with collisions are to use less windows and communication towers and BE CAREFUL WHEN YOU DRIVE!!! This may not only help American Robins but also other species of birds and maybe even animals!"
+            ],
+            "photos": [
+                  {
+                        "src": "assets/birds/American_Robin-adult01.webp",
+                        "caption": "Adult american robin"
+                  },
+                  {
+                        "src": "assets/birds/American_Robin-adult02.webp",
+                        "caption": "Adult american robin"
+                  },
+                  {
+                        "src": "assets/birds/American_Robin-chicks.webp",
+                        "caption": "American robin with chicks"
+                  }
+            ],
+            "audio": {
+                  "src": "assets/sounds/american-robin-jonathon-jongsma.ogg",
+                  "recordist": "Jonathon Jongsma"
+            },
+            "quizOverride": [
+                  {
+                        "q": "Where would you most expect to find the American Robin?",
+                        "opts": [
+                              "Backyards, parks, lawns, forests, and neighborhoods",
+                              "Backyards, feeders, flowers, mountain meadows, and shrubby areas",
+                              "Ponds, lakes, beaches, tide pools, mudflats, and shallow wetlands",
+                              "Marshes, ponds, shorelines, and shallow water"
+                        ],
+                        "a": 0
+                  },
+                  {
+                        "q": "Which fun fact belongs to the American Robin?",
+                        "opts": [
+                              "Scientists believe robins may choose fruits with bugs in them",
+                              "One tracked migrant traveled about 300 miles a day",
+                              "Chicks can walk and swim about 8 hours after hatching",
+                              "Does not build its own nest cavity and may use woodpecker holes"
+                        ],
+                        "a": 0
+                  },
+                  {
+                        "q": "Which population fact matches the American Robin?",
+                        "opts": [
+                              "Recovered from DDT-era declines and is now low concern",
+                              "Very numerous but declined about 20% from 1966 to 2019",
+                              "Very common around the world and lives in the Bay Area",
+                              "Not endangered with a global breeding population around 370 million"
+                        ],
+                        "a": 3
+                  }
+            ],
+            "habIdx": 2
+      },
+      {
+            "id": 17,
+            "slug": "sandhill-crane",
+            "name": "Sandhill Crane",
+            "sci": "Antigone canadensis",
+            "group": "water",
+            "sizeClass": "Large",
+            "status": "Protected",
+            "colorAnswer": "Mostly gray with a red forehead patch",
+            "colorsDetail": "Mostly gray with a red forehead patch.",
+            "sizeDetail": "Large crane; chicks can walk and swim within hours of hatching.",
+            "statusDetail": "Low concern; increasing a bit more than 4% each year.",
+            "fact": "That is one interesting fact about them.",
+            "article": [
+                  "I went to Merced National Wildlife Refuge and saw the Sandhill Cranes. One fact about Sandhill Cranes is that they have a bald head. They have them because it’s a sign of maturity for these birds. That is one interesting fact about them. Another fact is that they can get out of their nest 8 hours after they hatch, capable of swimming! That’s like 8 hours after you’re born, you can safely play outside while being able to walk! Incredible!",
+                  "Sandhill Cranes are omnivores and eat seeds, grains, snails, small vertebrates, berries, invertebrates, small mammals, nestling birds, reptiles, amphibians, tubers, and fish. They will also eat plants that grow in and near the water. To eat fish, they will walk around in the water and when they find a fish, they will strike. And don’t be surprised when you see a Sandhill Crane digging. They catch insects like that. They will dig to find the insects, then they will catch them.",
+                  "Sandhill Cranes breed for life. Most will breed at or before the age of 2, but some may not breed until 7 years old! That is a pretty old age for a Sandhill Crane to start breeding!",
+                  "Sandhill Cranes are a low concern species, increasing a bit more than 4% each year. But unfortunately, the Mississippi Sandhill Crane is endangered. Another isolated part of Florida is of concern, but is not endangered yet. There is not much you need to do to help protect the Sandhill Crane, for the number of Sandhill Cranes are slowly increasing. The Sandhill Crane is a unique bird that deserves to be protected!"
+            ],
+            "photos": [
+                  {
+                        "src": "assets/birds/Sandhill_Crane-adult02.webp",
+                        "caption": "Adult sandhill crane"
+                  },
+                  {
+                        "src": "assets/birds/Sandhill_Cranes-adults01.webp",
+                        "caption": "Sandhill crane adults"
+                  },
+                  {
+                        "src": "assets/birds/Sandhill_Cranes-adults03.webp",
+                        "caption": "Sandhill crane adults"
+                  }
+            ],
+            "audio": {
+                  "src": "assets/sounds/sandhill-crane-jonathon-jongsma.ogg",
+                  "recordist": "Jonathon Jongsma"
+            },
+            "quizOverride": [
+                  {
+                        "q": "Which size fact matches the Sandhill Crane?",
+                        "opts": [
+                              "Large crane; chicks can walk and swim within hours of hatching.",
+                              "Length 5.9-6.3 in; wingspan 8.3-9.4 in.",
+                              "Length 12-13.5 in; weight 3.5-4.9 oz; wingspan 17.3-19 in.",
+                              "Length about 4 ft; wingspan about 9 ft."
+                        ],
+                        "a": 0
+                  },
+                  {
+                        "q": "Which color clue describes the Sandhill Crane?",
+                        "opts": [
+                              "Blue-gray wings, black head/eye area, white face, dark-brown and white chest, gray-and-white underwing.",
+                              "Mostly gray with a red forehead patch.",
+                              "Yellow underparts with a black V on the chest and brown streaked upperparts.",
+                              "Dark brownish head and upperparts with white breast and belly."
+                        ],
+                        "a": 1
+                  },
+                  {
+                        "q": "Which conservation fact matches the Sandhill Crane?",
+                        "opts": [
+                              "Common throughout the Bay Area",
+                              "Pretty common",
+                              "Common in the Bay Area and stable from 1966 to 2019",
+                              "Low concern and increasing a bit more than 4% each year"
+                        ],
+                        "a": 3
+                  }
+            ],
+            "habIdx": 0
+      },
+      {
+            "id": 18,
+            "slug": "turkey-vulture",
+            "name": "Turkey Vulture",
+            "sci": "Cathartes aura",
+            "group": "raptor",
+            "sizeClass": "Large",
+            "status": "Common",
+            "colorAnswer": "Dark brown body, featherless red head, pale bill, and two-toned underwings",
+            "colorsDetail": "Dark brown body, featherless red head, pale bill, and two-toned underwings.",
+            "sizeDetail": "Length 25.2-31.9 in; wingspan 66.9-70.1 in; weight about 70.5 oz.",
+            "statusDetail": "Low concern and common around open areas.",
+            "fact": "Another cool thing about them is this: when a bird, animal, or a human comes near, they will vomit on them!",
+            "article": [
+                  "I went to Shoreline Park and saw the Turkey Vultures. They are unique because they have bald heads. Have you ever wondered why they have bald heads? Well, you’ll learn that in this chapter! It is actually pretty simple. I’ll let you take a guess.",
+                  "A: they just have bald heads",
+                  "B: because they don’t want blood to cover their feathers when they fight",
+                  "C: because they don’t want to get blood on their feathers when they eat",
+                  "D: B and C",
+                  "E: None of the above",
+                  "The correct answer is C. They don’t want to get blood on their feathers when they eat! That is very interesting to me. Now, it is time I introduce you to the unique bird: the Turkey Vultures!",
+                  "Turkey Vultures rarely hunt. They usually steal food instead. And then, like most other raptors, they will tear up their food and eat it. The biggest, strongest vultures will eat first. The small and skinny ones have to wait to eat the scraps at the end.",
+                  "Now, as you know from the beginning, Turkey Vultures have bald heads. And I want to remind you that this is because they do not want to get blood on their feathers when they eat. Another cool thing about them is this: when a bird, animal, or a human comes near, they will vomit on them! Despite what they eat, this may be a strong weapon. So I’m warning you, don’t go too near to a Turkey Vulture.",
+                  "Turkey Vultures are of low concern. Threats include pesticides. The biggest threat towards a Turkey Vulture is food poisoning. Since a Turkey Vulture's main diet is rotten food, poisoning will make them sick and may lead to death. Other threats include trapping and killing.",
+                  "Yet not endangered, Turkey Vultures still deserve to be protected. To help, please don’t poison their food. Don’t trap them or kill them either. Turkey Vultures are very unique and we need to keep them safe, and I hope you help too!"
+            ],
+            "photos": [
+                  {
+                        "src": "assets/birds/Turkey_Vulture-adult01.webp",
+                        "caption": "Adult turkey vulture"
+                  },
+                  {
+                        "src": "assets/birds/Turkey_Vulture-adult02.webp",
+                        "caption": "Adult turkey vulture"
+                  },
+                  {
+                        "src": "assets/birds/Turkey_Vulture-juvenile.webp",
+                        "caption": "Juvenile turkey vulture"
+                  }
+            ],
+            "audio": {
+                  "src": "assets/sounds/turkey-vulture-cristian-pinto.mp3",
+                  "recordist": "Cristian Pinto"
+            },
+            "quizOverride": [
+                  {
+                        "q": "Which feeding behavior matches the Turkey Vulture?",
+                        "opts": [
+                              "Forages as an omnivore in wetlands and open fields",
+                              "Finds dead animals and may steal food instead of hunting",
+                              "Sweeps its long upturned bill side to side through shallow water",
+                              "Dives from high above with tucked wings and strikes prey with sharp talons"
+                        ],
+                        "a": 1
+                  },
+                  {
+                        "q": "Which habitat clue matches the Turkey Vulture?",
+                        "opts": [
+                              "Marshes, bay edges, lakes, creeks, and shorelines",
+                              "Shrubs, small trees, creekside willow areas, and places near water",
+                              "Open country, roadsides, fields, hills, and areas with rising warm air",
+                              "Oak woodlands, pine-oak forests, streamside forests, and some suburbs"
+                        ],
+                        "a": 2
+                  },
+                  {
+                        "q": "Which conservation problem is linked to the Turkey Vulture?",
+                        "opts": [
+                              "Water pollution",
+                              "Food poisoning and contaminated carrion",
+                              "Climate change, window strikes, cars, and electric fences",
+                              "Hunting pressure"
+                        ],
+                        "a": 1
+                  }
+            ],
+            "habIdx": 1
+      },
+      {
+            "id": 19,
+            "slug": "common-murre",
+            "name": "Common Murre",
+            "sci": "Uria aalge",
+            "group": "water",
+            "sizeClass": "Medium",
+            "status": "Common",
+            "colorAnswer": "Dark brownish head and upperparts with white breast and belly",
+            "colorsDetail": "Dark brownish head and upperparts with white breast and belly.",
+            "sizeDetail": "Length 38-43 cm; wingspan 64-71 cm; weight 800-1,125 g.",
+            "statusDetail": "Not treated as endangered in the essay, but faces hunting and other pressures.",
+            "fact": "They lay their eggs so that they point in a direction that will make the egg roll in a circle instead of falling off the cliff.",
+            "article": [
+                  "A bird starting with the letter U is hard to find, so instead, I used the scientific name of a Common Murre: Uria aalge. This is why they are called Uria aalge: The word Uria comes from the Greek word “ourein” (οὐρέω), which means to dive. This reflects on the bird's diving skills. The word “aalge” is the old Danish word of auk, the family it is in. The Common Murre can also be called the Common Guillemot. These birds are most likely seen at places like Devil’s Rock and Farallon Islands and Point Reyes in the early morning and late afternoon. They are also best found from spring to summer. Let’s dive deeper so we can learn more about these eggcellent birds (Get it?)!",
+                  "Common Murres eat by diving deep into the water and catching prey in their bill. They “fly” through the water and use their wings to navigate. Once a Common Murre dived as much as 591 feet, but most murres dive 66-146 feet. Common Murres also forage in flocks. Rockfish, pollock, arctic cod, saffron cod, tom cod, surfperch, sandlance, sculpin, hake, greenling, capelin, herring, smelt, anchovy, and sardine are what they usually eat in the Pacific. In the Atlantic, they take capelin, sandlance, shad, menhaden, flounder, lanternfish, and Atlantic cod. Other prey include amphipods, krill, and marine worms. They may also eat squid and octopus especially in the nonbreeding season.",
+                  "Common Murres have a length of 38 - 43 cm, a wingspan of 64 - 71 cm, and weigh 800 - 1,125 grams. Their size is very similar to the Razorbill (another seabird) and the Thick-Billed Murre. They are also slightly bigger than a Tufted Puffin. Mallards have a longer length and wingspan but have similar weight to the Common Murre.",
+                  "An interesting fact about the Common Murre is that they lay their eggs so that they point in a direction that will make the egg roll in a circle instead of falling off the cliff. They are also shaped like a pear, which helps. Smart, right?",
+                  "Another fact is that even though Common Murres look like penguins and are even nicknamed “flying penguins” because they look like them but can fly, they aren’t closely related to penguins. Murres are in a family called the Alcidae (with auks, razorbills, puffins, auklets, murrelets, and guillemots) when penguins are in a family called the Sphenicidae. Murres are in the Charadriiformes order when penguins are in the Spheniciformes order. Murres also live in the Northern Hemisphere when penguins live in the Southern Hemisphere.",
+                  "Also, even though Common Murres are called Common Guillemots too, they are not guillemots. Guillemots are a different species than a murre but the two are in the same family (the auk family). Guillemots are mostly black but have white patches under their wings which is easy to differentiate from murres, who have white breasts and bellies and a dark brownish tanish head and back.",
+                  "Common Murres are common, which makes sense due to their name: Common Murres. In Canada, 100,000 individual murres are hunted annually. They are also hunted in Greenland and the Faroe Islands. Sad. Other threats include climate change, affecting the water temperatures and reducing the availability of prey they have, and oil spilling. Oil pollution also is part of the “prey species for Common Murres are reducing” problem. Another threat is over fishing, doing the same as the previous two. A last threat is mammalian predators, such as foxes. Thankfully, it has stopped now, but people used to take their eggs as food. Don’t Common Murres already have enough difficulties?",
+                  "You can help keep Common Murres at their current high population by encouraging others to cease climate change. This is a MASSIVE problem for not only murres, but all other animals, plants, and even us! We want to keep our planet healthy, just like we try to keep ourselves healthy. You can also not spill oil into the ocean. Try to reduce the hunting of this species and when you see trash, pick it up to prevent further pollution. Remember: THERE ARE TRASH CANS FOR A REASON!!! USE THEM AND DON’T LITTER!!! Unfortunately, we can’t do much about the predators they have, unless we kill off most of the foxes, but then the foxes would be endangered, and it would all be pointless. Don’t lose hope yet, though! There’s one more thing you can do: Share your knowledge about this fascinating bird so others can help preserve it too! See you in the next chapter!"
+            ],
+            "photos": [
+                  {
+                        "src": "assets/birds/Common_Murre-adult01.webp",
+                        "caption": "Adult common murre"
+                  },
+                  {
+                        "src": "assets/birds/Common_Murre-chick.webp",
+                        "caption": "Common murre chick"
+                  },
+                  {
+                        "src": "assets/birds/Common_Murres-adults02.webp",
+                        "caption": "Common murre adults"
+                  }
+            ],
+            "audio": {
+                  "src": "assets/sounds/common-murre-lawrence-shove.ogg",
+                  "recordist": "Lawrence Shove"
+            },
+            "quizOverride": [
+                  {
+                        "q": "What does the Common Murre eat?",
+                        "opts": [
+                              "Small fish and shrimp",
+                              "Fish and other ocean prey caught underwater",
+                              "Plants, seeds, grains, insects, and small animals",
+                              "Mostly birds, plus bats, rodents, and fish"
+                        ],
+                        "a": 1
+                  },
+                  {
+                        "q": "How does the Common Murre usually get food?",
+                        "opts": [
+                              "Dives underwater and “flies” through the water, often foraging in flocks",
+                              "Scans from a perch and pounces on prey with one or both talons",
+                              "Dives from high above with tucked wings and strikes prey with sharp talons",
+                              "Sweeps its long upturned bill side to side through shallow water"
+                        ],
+                        "a": 0
+                  },
+                  {
+                        "q": "Which threat affects the Common Murre?",
+                        "opts": [
+                              "Hunting, oil spills, fishing gear, and disturbance",
+                              "Habitat loss, disturbance, and wetland changes",
+                              "Human disturbance, habitat loss, and water quality problems",
+                              "Climate change, window strikes, cars, and electric fences"
+                        ],
+                        "a": 0
+                  }
+            ],
+            "habIdx": 0
+      },
+      {
+            "id": 20,
+            "slug": "vermilion-flycatcher",
+            "name": "Vermilion Flycatcher",
+            "sci": "Pyrocephalus rubinus",
+            "group": "song",
+            "sizeClass": "Tiny",
+            "status": "Uncommon",
+            "colorAnswer": "Males are bright red/orange with dark wings",
+            "colorsDetail": "Males are bright red/orange with dark wings; females are brownish with pale underparts.",
+            "sizeDetail": "Length 5.1-5.5 in; height 3.1 in; wingspan 9.4-9.8 in.",
+            "statusDetail": "Pretty common; desert species.",
+            "fact": "Its genus name is Pyrocephalus, which means “fire-headed.",
+            "article": [
+                  "I went to Merced National Wildlife Refuge and saw a Vermilion Flycatcher. One interesting fact about the Vermilion Flycatcher is that its genus name is Pyrocephalus, which means “fire-headed.” That’s because of the vermilion feathers atop their heads, which also gives them their name: Vermilion Flycatcher. Now that you know how Vermilion Flycatchers got their name, let’s dig (or more like fly) in!",
+                  "Vermilion Flycatchers, like all other flycatchers, capture their prey on their wing or by suddenly flying out from an exposed perch. These flights are short and direct, and they often swoop back in a circle, returning to the same perch. Vermilion Flycatchers usually feed within the range of 10 feet off ground. They carry prey back to the perch, then will whack it against the perch. That makes their prey more soft before eating. Vermilion Flycatchers eat bugs such as grasshoppers, butterflies, honey bees, beetles, and crickets. A Vermilion Flycatcher is quite small. They have a length of 5.1 to 5.5 inches, a height of 3.1 inches, and a wingspan of 9.4 to 9.8 inches. They weigh 0.39 to 0.49 ounces. They also have a lifespan of 4 to 5 years.",
+                  "One interesting fact about Vermilion Flycatchers is that when a male Vermilion Flycatcher courts a female one, the male one brings a gift! The gift is usually a butterfly or some other type of flashy insect. That’s a unique thing that Vermilion Flycatchers do.",
+                  "Vermilion Flycatchers are pretty common. During 1969 to 2015, their population has been quite stable. In 2016, it was reported that it was estimated that the breeding population of Vermilion Flycatchers was at 560,000. As a desert species, Vermilion Flycatchers are sensitive to impacts from land development and human water use. Another threat is habitat destruction. Excessive groundwater pumping may also destroy the desert riparian habitats that the Vermilion Flycatcher and other desert species rely on.",
+                  "To help Vermilion Flycatchers, you can stop land development and don’t pump groundwater, or at least do it less. That will help keep their habitat safe. Although Vermilion Flycatchers are very far from extinction, they still deserve to be protected!"
+            ],
+            "photos": [
+                  {
+                        "src": "assets/birds/Vermilion_Flycatcher-female.webp",
+                        "caption": "Female vermilion flycatcher"
+                  },
+                  {
+                        "src": "assets/birds/Vermilion_Flycatcher-male01.webp",
+                        "caption": "Male vermilion flycatcher"
+                  },
+                  {
+                        "src": "assets/birds/Vermilion_Flycatcher-male02.webp",
+                        "caption": "Male vermilion flycatcher"
+                  }
+            ],
+            "audio": {
+                  "src": "assets/sounds/vermilion-flycatcher-peter-boesman.mp3",
+                  "recordist": "Peter Boesman"
+            },
+            "quizOverride": [
+                  {
+                        "q": "Where would you most expect to find the Vermilion Flycatcher?",
+                        "opts": [
+                              "Coastal waters, rocky nesting cliffs, and ocean colonies",
+                              "Desert areas, open country, and warm dry habitats",
+                              "Backyards, feeders, flowers, mountain meadows, and shrubby areas",
+                              "Shallow lakes, ponds, marshes, and wetlands"
+                        ],
+                        "a": 1
+                  },
+                  {
+                        "q": "Which fun fact belongs to the Vermilion Flycatcher?",
+                        "opts": [
+                              "Pyrocephalus means “fire-headed”",
+                              "It is the smallest dabbling duck in the world",
+                              "A single granary tree can hold up to 50,000 acorn holes",
+                              "Its pouch can hold up to 3 gallons of water"
+                        ],
+                        "a": 0
+                  },
+                  {
+                        "q": "Which population fact matches the Vermilion Flycatcher?",
+                        "opts": [
+                              "Not endangered with a global breeding population around 370 million",
+                              "Very common around the world and lives in the Bay Area",
+                              "Not endangered",
+                              "Pretty common desert species"
+                        ],
+                        "a": 3
+                  }
+            ],
+            "habIdx": 2
+      },
+      {
+            "id": 21,
+            "slug": "western-bluebird",
+            "name": "Western Bluebird",
+            "sci": "Sialia mexicana",
+            "group": "song",
+            "sizeClass": "Small",
+            "status": "Common",
+            "colorAnswer": "Bright blue head, wings, plumage, and tail",
+            "colorsDetail": "Bright blue head, wings, plumage, and tail; orange chest; white belly.",
+            "sizeDetail": "Small songbird; see essay for behavior and nesting details.",
+            "statusDetail": "Pretty common.",
+            "fact": "Western Bluebirds don’t really have a unique way of eating.",
+            "article": [
+                  "I went to Shoreline Park and saw the Western Bluebirds. Most of them were sitting on the trees, and some were on the ground. Western Bluebirds are cute little songbirds with a bright blue head, wings, plumage, and tail, an orange chest, and a white belly.",
+                  "Western Bluebirds don’t really have a unique way of eating. As usual, they will just catch their prey, rather in the air or from the ground. But they will particularly catch ground-dwelling insects such as grasshoppers, ants, beetles, spiders, caterpillars, wasps, pill bugs, and snails. During the winter, they will change their diet to fruits and seeds. Those include elderberries, grapes, mistletoes, raspberries, serviceberries, sumacs, blackberries, chokecherries, junipers, and even poison oak!",
+                  "Like many other birds, Western Bluebirds live in tree cavities. But their bills are not made for pecking in the wood. So, they rely on woodpeckers to help them make their homes. And though they look very gentle, they are very aggressive with their territory. Male rivals may grab each other’s legs, tumble to the ground, pin their opponent, stand over them, or jab them with their bills!",
+                  "Western Bluebirds are pretty common. Their biggest threats include habitat loss, more logging, more wildfires, and also development and grazing. Even in wooded areas, people still remove dead trees, making it more difficult for Western Bluebirds to nest. Other aggressive birds like House Sparrows and European Starlings take over Western Bluebirds nest sites that Western Bluebirds might otherwise use. So to protect Western Bluebirds, don’t log or remove dead trees. You can also plant more trees for them to live in. Without being able to nest, Western Bluebirds might go extinct (though there’s no sign of extinction today)! We can work together to keep Western Bluebirds thriving!"
+            ],
+            "photos": [
+                  {
+                        "src": "assets/birds/Western_Bluebird-adult.webp",
+                        "caption": "Female western bluebird"
+                  },
+                  {
+                        "src": "assets/birds/Western_Bluebird-male.webp",
+                        "caption": "Male western bluebird"
+                  },
+                  {
+                        "src": "assets/birds/Western_Bluebird-pair.webp",
+                        "caption": "Western bluebird pair"
+                  }
+            ],
+            "audio": {
+                  "src": "assets/sounds/western-bluebird-ryan-winkleman.mp3",
+                  "recordist": "Ryan Winkleman"
+            },
+            "quizOverride": [
+                  {
+                        "q": "Which size fact matches the Western Bluebird?",
+                        "opts": [
+                              "Small songbird; see essay for behavior and nesting details.",
+                              "Males 14.6-15.3 in; females 16.5-17.7 in; wingspan 24.4-35.4 in.",
+                              "Acorn Woodpecker-sized; add exact size if desired.",
+                              "Length 18.1-24.8 in; wingspan 39.8-57.1 in; weight 32.1-88.2 oz."
+                        ],
+                        "a": 0
+                  },
+                  {
+                        "q": "Which color clue describes the Western Bluebird?",
+                        "opts": [
+                              "Bright blue head, wings, plumage, and tail; orange chest; white belly.",
+                              "Yellow songbird; males often show rusty streaking on the chest.",
+                              "Mottled gray-brown with reddish-brown face and a white throat patch.",
+                              "Small falcon with rusty back/tail, blue-gray wings on males, and strong facial markings."
+                        ],
+                        "a": 0
+                  },
+                  {
+                        "q": "Which conservation fact matches the Western Bluebird?",
+                        "opts": [
+                              "Very numerous and increased more than 2% per year from 1966 to 2019",
+                              "Pretty common",
+                              "Common in the Bay Area and stable from 1966 to 2019",
+                              "Population is high but declined about 45% from 1966 to 2019"
+                        ],
+                        "a": 1
+                  }
+            ],
+            "habIdx": 2
+      },
+      {
+            "id": 22,
+            "slug": "acorn-woodpecker",
+            "name": "Acorn Woodpecker",
+            "sci": "Melanerpes formicivorus",
+            "group": "song",
+            "sizeClass": "Small",
+            "status": "Common",
+            "colorAnswer": "Acorn Woodpeckers are black-and-white with a red cap and pale face patches",
+            "colorsDetail": "Acorn Woodpeckers are black-and-white with a red cap and pale face patches.",
+            "sizeDetail": "Acorn Woodpecker-sized; add exact size if desired.",
+            "statusDetail": "Most common in oak woodlands; affected by historic development and habitat degradation.",
+            "fact": "This is the reason why I like these unique creatures.",
+            "article": [
+                  "I went to Rancho San Antonio and saw the Acorn Woodpeckers. And as you know, most woodpeckers peck holes to find food, (like sap, beetles, ants, leafcutter bee larvae, bagworm larvae and others) to nest, and to mark a territory. But do you know why Acorn Woodpeckers peck? I’ll let you guess.",
+                  "A. To keep their eggs safe",
+                  "B. To store food",
+                  "C. To make shelter from the rain",
+                  "D. To drink sap",
+                  "E. All of the above",
+                  "F. B. & D.",
+                  "G. A. & C.",
+                  "H. None of the above",
+                  "The answer is F. Acorn Woodpeckers drink sap from the holes they make and store nuts in them too. This is the reason why I like these unique creatures. Read on to learn more!",
+                  "Acorn Woodpeckers eat insects and arthropods. But they feed mostly on acorns. Other foods include walnuts, hazelnuts, and pinyon pine nuts, fruit, sap, oak catkins, lizards, grass seeds, flower nectar, and eggs of their own kind (which is Acorn Woodpecker eggs)! But how they eat is even more interesting in my opinion.",
+                  "For the nuts or acorns, they will first get one nut, and then fly back to their tree, then put the nut into a hole. If the holes run out, it’s the family of Acorn Woodpeckers’ job to peck new holes. And as the acorn and nuts dry and shrivel, the woodpeckers move them to smaller holes. And that it gives them more chances that their food will stay safe. But even though they’re nuts are stored nice and tightly, the Acorn Woodpeckers still give extra protection. When a chipmunk, squirrel, or any animal that wants to steal one nut, the woodpeckers go to work, chasing that animal away. But the only time an Acorn Woodpecker would usually lose a battle is what it’s fighting against another Acorn Woodpecker.",
+                  "While for insects, they will fly from high perches and prefer to catch flying insects when available. And for sap, they will gather in groups near small holes in trees to suck out the sap. These woodpeckers will often use the same holes for 1-6 years!",
+                  "Every member in an Acorn Woodpecker group spends most of their time drilling and storing acorns into trees. They might store acorns into human structures too. Those include fence posts, utility poles, buildings, and maybe even automobile radiators. But their acorns are usually stored in one particular tree, called the granary tree. By fall, one single granary tree can hold up to 50,000 holes, all drilled by Acorn Woodpeckers, with each and every hole filled with an acorn. Impressive!",
+                  "Since Acorn Woodpeckers are found most commonly in oak woodlands, the number of them has lessened because during historic times, development and habitat degradation has infected their population. Those include overgrazing and loss of oaks. And since oak, pine-oak, and streamside forests are all Acorn Woodpecker habitats, the overgrazing in Southwest Mexico that damages mountain pine-oak and streamside habitats is a major threat to Acorn Woodpeckers. Even though California populations have not been currently declining, they don’t have an accurate future because of how slow the oak forests regenerate. The other threats to Acorn Woodpeckers include European Starlings and other aggressive species taking over their nesting cavities and people shooting them to stop them from eating all their nuts, fruits, and other crops. However, they have shown that they can colonize new habitats including suburban neighborhoods to use human-made structures for their roosting and acorn storage.",
+                  "Acorn Woodpeckers are not endangered and are in low concern, but helping them will help them stay more healthy. Do you wanna help? Here are some ways you can: Don’t increase development and don’t overgraze (or more like don’t let animals overgraze because I don’t think that humans graze!). And please don’t shoot them just because they’re eating your crops. One way to avoid them from eating your crops is getting a bird feeder. That way instead of Acorn Woodpeckers eating your crops, they’ll choose to eat the nuts from your bird feeder. Acorn woodpeckers are interesting and unique birds, and they should be well protected by us."
+            ],
+            "photos": [
+                  {
+                        "src": "assets/birds/Acorn_Woodpecker-adult01.webp",
+                        "caption": "Adult acorn woodpecker"
+                  },
+                  {
+                        "src": "assets/birds/Acorn_Woodpecker-adult02.webp",
+                        "caption": "Adult acorn woodpecker"
+                  },
+                  {
+                        "src": "assets/birds/Acorn_Woodpecker-adult_with_acorn.webp",
+                        "caption": "Adult acorn woodpecker with acorn"
+                  }
+            ],
+            "audio": {
+                  "src": "assets/sounds/acorn-woodpecker-jonathon-jongsma.ogg",
+                  "recordist": "Jonathon Jongsma"
+            },
+            "quizOverride": [
+                  {
+                        "q": "Which feeding behavior matches the Acorn Woodpecker?",
+                        "opts": [
+                              "Returns to the same perch after trying to catch prey",
+                              "Stores acorns tightly in holes in a granary tree and drinks sap from drilled holes",
+                              "Dabbles in shallow water, mudflats, shorelines, and agricultural fields",
+                              "Drills holes in trees to find food and nesting cavities"
+                        ],
+                        "a": 1
+                  },
+                  {
+                        "q": "Which habitat clue matches the Acorn Woodpecker?",
+                        "opts": [
+                              "Shrubs, small trees, creekside willow areas, and places near water",
+                              "Oak woodlands, pine-oak forests, streamside forests, and some suburbs",
+                              "Marshes, ponds, shorelines, and shallow water",
+                              "Open fields, perches, farmland edges, and places with nesting cavities"
+                        ],
+                        "a": 1
+                  },
+                  {
+                        "q": "Which conservation problem is linked to the Acorn Woodpecker?",
+                        "opts": [
+                              "Collisions, rodenticides, habitat disturbance, and human conflict",
+                              "Habitat loss, glass collisions, pesticides, predators, and invasive species",
+                              "Hunting pressure",
+                              "Development, overgrazing, slow oak regeneration, nest competition, and shooting"
+                        ],
+                        "a": 3
+                  }
+            ],
+            "habIdx": 2
+      },
+      {
+            "id": 23,
+            "slug": "yellow-warbler",
+            "name": "Yellow Warbler",
+            "sci": "Setophaga petechia",
+            "group": "song",
+            "sizeClass": "Tiny",
+            "status": "Common",
+            "colorAnswer": "Yellow songbird",
+            "colorsDetail": "Yellow songbird; males often show rusty streaking on the chest.",
+            "sizeDetail": "Length 4.7-5.1 in; wingspan 6.3-7.9 in; weight 0.3-0.4 oz.",
+            "statusDetail": "Very numerous in the Bay Area and North America, though declined about 20% from 1966 to 2019.",
+            "fact": "Did you know that Brown-Headed Cowbirds will often parasitize (meaning the female cowbird will lay her eggs into the warbler's nest so she doesn’t have to raise the chicks herself) the nest of Yellow Warblers (and also other species of birds in case you're wondering)?",
+            "article": [
+                  "It’s not easy being a small bird. In fact, it’s dangerous! Sometimes, Yellow Warblers are found tangled in an orb weaver spider’s web! Their predators include garter snakes, blue racers (also a type of snake), red squirrels and other big rodents, American Crows, Blue Jays, raccoons, weasels, skunks, foxes, cats, and even some hawks and owls! I thought this was very interesting (and sad) for I didn't know that squirrels, crows, jays, or weasels ate small birds. Come and learn more about this small songbird.",
+                  "Yellow Warblers eat insects that they pick from foliage or capture on short flights or while hovering to reach leaves. They mostly forage along slender branches of shrubs of small trees where there are a lot of insects. They may also look on or under leaves. They also usually feed near water since lots of insects live near water. Common prey include midges, caterpillars, beetles, small spiders, moths, mosquitoes, damselflies, leafhoppers and wasps. They also might eat bits of fruit, especially in the winter.",
+                  "Yellow Warblers are about 4.7 to 5.1 inches (12 to 13 cm) in length and have a wingspan of 6.3 to 7.9 inches (16 to 20 cm). They weigh between 0.3 and 0.4 ounces (9 and 11 grams). Their size is similar to an American Redstart or a Palm Warbler.",
+                  "Did you know that Brown-Headed Cowbirds will often parasitize (meaning the female cowbird will lay her eggs into the warbler's nest so she doesn’t have to raise the chicks herself) the nest of Yellow Warblers (and also other species of birds in case you're wondering)? However, because the warbler can recognize the different eggs (usually), it will build a new nest directly on top of the parasitized one when this happens, sometimes resulting in nests with up to six tiers. And the Yellow Warblers have an alarm for when a Brown-Headed Cowbird is nearby! Their ‘seet’ call is actually a warning.",
+                  "Yellow Warblers are very numerous not just in the Bay Area but also in all of North America. Unfortunately, their population declined about 0.4% per year for a total decline of about 20% from 1966 to 2019. But they are still very common and their global breeding population is around 97 million. Despite this, we still have to protect them because an estimated 2.25 to 4.5 million Yellow Warblers die each year from collisions alone! Other threats include grazing in rangelands, especially by creeks near stands of willow trees because it makes it harder for them to find a good nesting spot then. Brown-Headed Cowbirds are also a problem since they (as I mentioned before) lay their eggs in Yellow Warbler’s nests. That can reduce nesting success.",
+                  "You can still help Yellow Warblers by building with less glass and trying to keep grazing out of where Yellow Warblers would nest. But unfortunately, we can do nothing about the Brown-Headed Cowbirds. Just doing the first two would still help a lot! Let’s try to keep this species thriving!"
+            ],
+            "photos": [
+                  {
+                        "src": "assets/birds/Yellow_Warbler-breeding_male01.webp",
+                        "caption": "Breeding male yellow warbler"
+                  },
+                  {
+                        "src": "assets/birds/Yellow_Warbler-breeding_male02.webp",
+                        "caption": "Breeding male yellow warbler"
+                  },
+                  {
+                        "src": "assets/birds/Yellow_Warbler-nest_with_eggs.webp",
+                        "caption": "Yellow warbler nest with eggs"
+                  }
+            ],
+            "audio": {
+                  "src": "assets/sounds/yellow-warbler-g-mcgrane.ogg",
+                  "recordist": "G McGrane"
+            },
+            "quizOverride": [
+                  {
+                        "q": "What does the Yellow Warbler eat?",
+                        "opts": [
+                              "Grasshoppers, beetles, scorpions, spiders, small rodents, small birds, snakes, lizards, and frogs",
+                              "Earthworms, crayfish, spiders, snails, clams, leeches, insects, and larvae",
+                              "Midges, caterpillars, beetles, spiders, moths, mosquitoes, damselflies, leafhoppers, wasps, and fruit",
+                              "Carrion and food stolen from other animals"
+                        ],
+                        "a": 2
+                  },
+                  {
+                        "q": "How does the Yellow Warbler usually get food?",
+                        "opts": [
+                              "Perches low, darts out to catch prey, then often returns to the same perch",
+                              "Dabbles in shallow water, mudflats, shorelines, and agricultural fields",
+                              "Scans from a perch and pounces on prey with one or both talons",
+                              "Picks insects from foliage, catches them in short flights, or hovers near leaves"
+                        ],
+                        "a": 3
+                  },
+                  {
+                        "q": "Which threat affects the Yellow Warbler?",
+                        "opts": [
+                              "Loss of nest sites, clean farming, pesticides, and prey loss",
+                              "Pollutants, pesticides, selenium, disturbance at colonies, and water diversion",
+                              "Climate change, window strikes, cars, and electric fences",
+                              "Collisions, grazing near nesting areas, and Brown-headed Cowbird parasitism"
+                        ],
+                        "a": 3
+                  }
+            ],
+            "habIdx": 2
+      },
+      {
+            "id": 24,
+            "slug": "white-crowned-sparrow",
+            "name": "White-Crowned Sparrow",
+            "sci": "Zonotrichia leucophrys",
+            "group": "song",
+            "sizeClass": "Small",
+            "status": "Common",
+            "colorAnswer": "Brown and gray sparrow with bold black-and-white crown stripes",
+            "colorsDetail": "Brown and gray sparrow with bold black-and-white crown stripes.",
+            "sizeDetail": "Length 5.9-6.3 in; wingspan 8.3-9.4 in.",
+            "statusDetail": "Common in the Bay Area, especially winter and spring; population stable from 1966 to 2019.",
+            "fact": "They will share their territory with Fox Sparrows but chase away Dark-Eyed Juncos and Chipping Sparrows.",
+            "article": [
+                  "Since a bird starting with Z is hard to find, I used the scientific name of a White-Crowned Sparrow: Zonotrichia leucophrys. Zono comes from the Greek word “zone” (ζώνη) and trichia comes from the Greek word “thrix” (θρίξ). Since \"zone\" means band and “thrix” means hair, Zonotrichia means bands in hair, in this case describing the white stripes they have. The word leucophrys also originates in the Greek. Leuc comes from the Greek word leukos (λευκός) which means white. The other part of the word (ophrys) comes from the Greek word ophrys (ὀφρῦς) and means eyebrow. So leucophrys means white eyebrow, and just like Zonotrichia, it also describes the white stripes over their eyes. Even though I’ve never seen one of these myself (yet), they are still common in the Bay Area and can mostly be seen in the winter and spring, which is from late September to April. Now that you know how this bird got its scientific name and when you can find it, let’s learn even more!",
+                  "White-Crowned Sparrows eat by hopping across the ground in shrubs and bushes. They will also “double-scratch”, which is when they hop backwards to turn over leaves before hopping forward again with a pounce. Along with that, they will peck at visible bugs and seeds, or fly up from a low perch or the ground to catch an insect in mid-air. They may eat small berries, catkins, and other vegetation on perches too. They will eat seeds, weeds, small buds, ragweeds, pigweeds, catkin, and grasses. You may also see them eating bugs including caterpillars, wasps, and beetles during the summertime. They also eat grain like oats, corn, wheat, and barley along with fruits like elderberries and blackberries.",
+                  "An interesting fact about White-Crowned Sparrows is that they will share their territory with Fox Sparrows but chase away Dark-Eyed Juncos and Chipping Sparrows. Also, don’t underestimate these birds. They may be tiny but one was tracked down as it migrated and every day it traveled about 300 miles! It would take us about 10 to 20 days to walk 300 miles (if we stopped to sleep)!",
+                  "White-Crowned Sparrows have a length of 15–16 cm (5.9–6.3 inches). Females weigh approximately 25.5 grams (0.9 oz) as a male weighs about 28 grams (1.0 oz). They have a wingspan of 8.3 inches to 9.4 inches (21–24 cm). They are slightly larger than a Song Sparrow and House Sparrows weigh slightly more than them.",
+                  "White-Crowned Sparrows are very common and widespread with no declines or inclines. Their population held steady really well between 1966 and 2019 and still is now. But they still have threats that include habitat loss caused by logging, agriculture, shrub succession, urbanization, and wildfires. Climate change is affecting the success of their eggs and fledglings, especially in the tundra or shrubland nests. The exposure of pesticides and chemicals is a threat they share with other birds. These bad chemicals can delay migrations and make them lose a lot of weight, which is bad for them. Predators like snakes, hawks, owls, raccoons, and cats, both domestic and wild, also contribute. Lastly, collisions with windows and cars also threatens them.",
+                  "Their population remains balanced because they can eat many different foods from bugs and insects to berries and fruit to grain, seeds, and other vegetation. They also have many habitats like tundra, boreal, urban backyards, and areas with lots of shrubs. They are also protected by law.",
+                  "Ways you can help are to preserve early-succession shrubs, reduce the use of pesticides and other harmful chemicals, try to keep your cat away from any birds, or just keep them indoors (if you have a cat), build with less windows and BE CAREFUL WHEN YOU ARE DRIVING!!!!! You can also try to stop climate change by using less plastic, turning off lights as often as possible, eating less meat, using more electric vehicles, bike and walk more, and also try not to waste. Reducing the use of fossil fuels is another way you can help. You can also prevent wildfires by keeping campfires under control, not throwing cigarettes and matches on the ground, and being careful when setting off firecrackers and fireworks, getting rid of dry leaves, and trimming trees. That way, you can help in keeping the White-Crowned Sparrow’s population as stable as it has always been!"
+            ],
+            "photos": [
+                  {
+                        "src": "assets/birds/White_Crowned_Sparrow-adult01.webp",
+                        "caption": "Adult white crowned sparrow"
+                  },
+                  {
+                        "src": "assets/birds/White_Crowned_Sparrow-adult02.webp",
+                        "caption": "Adult white crowned sparrow"
+                  },
+                  {
+                        "src": "assets/birds/White_Crowned_Sparrow-adult03.webp",
+                        "caption": "Adult white crowned sparrow"
+                  }
+            ],
+            "audio": {
+                  "src": "assets/sounds/white-crowned-sparrow-national-park-service.ogg",
+                  "recordist": "National Park Service"
+            },
+            "quizOverride": [
+                  {
+                        "q": "Where would you most expect to find the White-Crowned Sparrow?",
+                        "opts": [
+                              "Open country, roadsides, fields, hills, and areas with rising warm air",
+                              "Shrubs, bushes, tundra, backyards, and Bay Area winter/spring habitats",
+                              "Open fields, perches, farmland edges, and places with nesting cavities",
+                              "Ponds, lakes, beaches, tide pools, mudflats, and shallow wetlands"
+                        ],
+                        "a": 1
+                  },
+                  {
+                        "q": "Which fun fact belongs to the White-Crowned Sparrow?",
+                        "opts": [
+                              "Can dive about 240 miles per hour",
+                              "One tracked migrant traveled about 300 miles a day",
+                              "Can vomit as a defense when threatened",
+                              "Hollow bones help this large bird stay light enough to fly"
+                        ],
+                        "a": 1
+                  },
+                  {
+                        "q": "Which population fact matches the White-Crowned Sparrow?",
+                        "opts": [
+                              "Common in the Bay Area and stable from 1966 to 2019",
+                              "Common throughout the Bay Area",
+                              "Not endangered and increasing in recent decades",
+                              "Not endangered and increased about 2.8% per year from 1968 to 2017"
+                        ],
+                        "a": 0
+                  }
+            ],
+            "habIdx": 2
       }
-      return { id:i, name, sci, group, emoji, sizeClass, status, colorAnswer, colorsDetail, sizeDetail, statusDetail, fact,
-        ff:{ q:ffQ, opts:ffOptsStr.split("|"), a:ffA }, habIdx, featured:!!FEATURED[name], article,
-        tint:this.TINT[group], groupLabel:this.GL[group] };
-    });
+];
+    this._birds = DATA.map((bird, i) => ({
+      ...bird,
+      id: i,
+      tint: this.TINT[bird.group],
+      groupLabel: this.GL[bird.group],
+      featured: true,
+    }));
     return this._birds;
   }
 
   // ---------- quiz building (deterministic) ----------
   buildQuiz(bird){
+    if (bird.quizOverride) return bird.quizOverride;
     const sizes = ["Tiny — smaller than a sparrow","Small — about robin-sized","Medium — about crow-sized","Large — goose-sized or bigger"];
     const sizeIdx = { Tiny:0, Small:1, Medium:2, Large:3 };
     const habs = ["On mudflats, marshes, and salt ponds","Soaring in open sky or perched up high","In oak woodlands, parks, and backyards","On the open ocean and rocky cliffs"];
-    const groupHab = { water:0, raptor:1, song:2 };
+    const groupHab = { water:0, raptor:1, song:2, hummingbird:2 };
     const habA = bird.habIdx != null ? bird.habIdx : groupHab[bird.group];
     const colorPool = ["Bright cherry-red all over","Pure snowy white","Electric blue with a crest","Jet black and glossy","Warm brown with bold streaks","Sunny lemon-yellow","Soft gray with a pale belly","Green with a scarlet cap"];
     const distractors = colorPool.filter(c=>c!==bird.colorAnswer).slice(0,3);
@@ -518,7 +2359,7 @@ class Component extends DCLogic {
     { t:21, name:"Amethyst Ace", icon:"💎", color:"#CC4AFB" }, { t:24, name:"Diamond Birder", icon:"💠", color:"#7ad3ff" },
   ]; }
   badgeById(id){
-    if(id==="grand") return { name:"Grandmaster of the Bay", icon:"👑", req:"All 25 birds, all perfect", circleStyle:this.circle(true,"#FFFC00") };
+    if(id==="grand") return { name:"Grandmaster of the Bay", icon:"👑", req:"All birds, all perfect", circleStyle:this.circle(true,"#c9f4cf") };
     if(id[0]==="p"){ const d=this.partDefs().find(x=>"p"+x.t===id); return { name:d.name, icon:d.icon, req:`Take ${d.t} quizzes`, circleStyle:this.circle(true,"#FFFC00") }; }
     const d=this.accDefs().find(x=>"a"+x.t===id); return { name:d.name, icon:d.icon, req:`${d.t} perfect birds`, circleStyle:this.circle(true,d.color) };
   }
@@ -535,6 +2376,20 @@ class Component extends DCLogic {
   // ---------- navigation ----------
   nav(page){ this.setState({ page, celebrate:null }); window.scrollTo(0,0); }
   openBird(id){ this.setState({ page:"detail", birdId:id, answers:{}, finished:false, playing:false, celebrate:null }); window.scrollTo(0,0); }
+  openLightbox(photo){ if(photo && photo.src) this.setState({ lightbox: photo }); }
+  closeLightbox(){ this.setState({ lightbox:null }); }
+  stopClick(e){ if(e && e.stopPropagation) e.stopPropagation(); }
+
+  toggleAudio(id){
+    const audio = document.getElementById(`audio-${id}`);
+    if(!audio) return;
+    if(audio.paused){
+      audio.play().then(()=>this.setState({ playing:true })).catch(()=>this.setState({ playing:false }));
+    } else {
+      audio.pause();
+      this.setState({ playing:false });
+    }
+  }
 
   selectAnswer(qi,oi){ if(this.state.answers[qi]!=null) return; this.setState(s=>({ answers:{...s.answers, [qi]:oi} })); }
   finishQuiz(bird, quiz){
@@ -557,7 +2412,7 @@ class Component extends DCLogic {
   // ---------- render ----------
   renderVals(){
     const props = this.props || {};
-    const siteName = props.siteName || "Bay Birds";
+    const siteName = props.siteName || "BirdLearn";
     const showFunFacts = props.showFunFacts !== false;
     const all = this.BIRDS();
     const page = this.state.page;
@@ -571,7 +2426,7 @@ class Component extends DCLogic {
     });
 
     // gallery
-    const filterDefs = [["all","All 25"],["water","Water & shore"],["raptor","Raptors"],["song","Songbirds"]];
+    const filterDefs = [["all","All"],["water","Water & shore"],["raptor","Raptors"],["hummingbird","Hummingbirds"],["song","Songbirds"]];
     const q = this.state.query.trim().toLowerCase();
     const filters = filterDefs.map(([key,label])=>{
       const active=this.state.filter===key;
@@ -582,6 +2437,9 @@ class Component extends DCLogic {
       const sc = b.status==="Common"?"var(--snap-green)":b.status==="Uncommon"?"var(--snap-blue)":"var(--snap-red)";
       return { ...b, onOpen:()=>this.openBird(b.id),
         statusPill:`font:var(--caption);font-weight:700;background:#fff;color:${sc};padding:3px 10px;border-radius:999px;box-shadow:var(--shadow-xs);`,
+        cardPhotoSrc: b.photos && b.photos[0] ? b.photos[0].src : "",
+        hasCardPhoto: !!(b.photos && b.photos[0]),
+        noCardPhoto: !(b.photos && b.photos[0]),
         done: !!r.taken, doneLabel: r.perfect ? "★ Perfect" : "✓ Done" };
     });
 
@@ -598,7 +2456,11 @@ class Component extends DCLogic {
         const sel=this.state.answers[qi];
         const opts=qq.opts.map((text,oi)=>{
           let bg="#fff",bd="1px solid var(--border)",mark="";
-          if(sel!=null){
+          if(sel!=null && !this.state.finished && oi===sel){
+            bg="rgba(107,184,223,0.12)";
+            bd="1.5px solid var(--snap-blue)";
+          }
+          if(sel!=null && this.state.finished){
             if(oi===qq.a){ bg="rgba(57,202,142,0.16)"; bd="1.5px solid var(--snap-green)"; mark="✓"; }
             if(oi===sel && sel!==qq.a){ bg="rgba(242,60,87,0.12)"; bd="1.5px solid var(--snap-red)"; mark="✗"; }
           }
@@ -623,10 +2485,23 @@ class Component extends DCLogic {
         statusIcon: bird.status==="Protected"?"shield":bird.status==="Uncommon"?"eye":"heart",
         statusIconWrap:`width:42px;height:42px;border-radius:12px;background:${bird.status==="Common"?"rgba(57,202,142,0.14)":bird.status==="Uncommon"?"rgba(0,182,255,0.14)":"rgba(242,60,87,0.12)"};display:flex;align-items:center;justify-content:center;margin-bottom:12px;`,
         mainPhotoId:`ph-${bird.id}-main`, mainPhotoPlaceholder:`Drop a photo of the ${bird.name}`,
-        galleryPhotos:[0,1,2].map(n=>({ id:`ph-${bird.id}-${n}`, placeholder:"Add a photo" })),
-        togglePlay:()=>this.setState(s=>({playing:!s.playing})),
+        mainPhotoSrc: bird.photos && bird.photos[0] ? bird.photos[0].src : "",
+        galleryPhotos:[0,1,2].map(n=>({
+          id:`ph-${bird.id}-${n}`,
+          src: bird.photos && bird.photos[n] ? bird.photos[n].src : "",
+          caption: bird.photos && bird.photos[n] ? bird.photos[n].caption : "Add a photo",
+          placeholder:"Add a photo",
+          onOpen:()=>this.openLightbox(bird.photos && bird.photos[n] ? bird.photos[n] : null)
+        })),
+        togglePlay:()=>this.toggleAudio(bird.id),
+        onAudioPlay:()=>this.setState({playing:true}),
+        onAudioPause:()=>this.setState({playing:false}),
         playIcon: playing?"pause":"play", audioTime: playing?"0:04 / 0:12":"0:00 / 0:12",
         audioProgress:`height:100%;background:var(--snap-yellow);border-radius:999px;width:${playing?100:0}%;transition:width ${playing?"12s linear":"0.3s var(--ease-out)"};`,
+        hasAudio: !!bird.audio, noAudio: !bird.audio,
+        audioId: `audio-${bird.id}`,
+        audioSrc: bird.audio ? bird.audio.src : "",
+        recordist: bird.audio ? bird.audio.recordist : "",
         quiz:{ questions, progressText:`${answeredCount} of ${quiz.length} answered`, showFinish: allAnswered && !this.state.finished,
           onFinish:()=>this.finishQuiz(bird,quiz), finished:this.state.finished, onRetry:()=>this.retryQuiz(),
           resultStyle, resultTitle, resultText },
@@ -655,6 +2530,8 @@ class Component extends DCLogic {
       query:this.state.query, onQuery:(e)=>this.setState({query:e.target.value}),
       filters, shown, hasResults: shown.length>0, noResults: shown.length===0,
       d, badges,
+      hasLightbox: !!this.state.lightbox, lightbox: this.state.lightbox || { src:"", caption:"" },
+      closeLightbox:()=>this.closeLightbox(), stopClick:(e)=>this.stopClick(e),
       hasCelebrate: !!(this.state.celebrate && this.state.celebrate.length), celebrateBadges,
       dismissCelebrate:()=>this.setState({celebrate:null}),
       resetProgress:()=>this.resetProgress(),
