@@ -70,6 +70,7 @@
   .lightbox-nav:active { transform:translateY(-50%) !important; }
   .lightbox-prev { left:18px; }
   .lightbox-next { right:18px; }
+  .audio-seek { width:100%; height:8px; margin:0; accent-color:var(--snap-yellow); cursor:pointer; }
   @media (max-width: 900px) {
     .shell { padding-left:20px !important; padding-right:20px !important; }
     .home-hero { flex-direction:column; align-items:stretch; padding-top:30px !important; }
@@ -130,8 +131,11 @@
             <input value="{{ query }}" onInput="{{ onQuery }}" placeholder="Search by name…" style="border:0;outline:0;background:transparent;font:var(--p);flex:1;color:var(--fg);"/>
           </div>
         </div>
-        <div class="daily-photo" style="width:280px;height:210px;border-radius:24px;background:#fff;display:flex;align-items:center;justify-content:center;flex:0 0 auto;box-shadow:var(--shadow-sm);overflow:hidden;">
-          <img src="{{ dailyHero.src }}" alt="{{ dailyHero.caption }}" style="width:100%;height:100%;object-fit:contain;display:block;">
+        <div style="flex:0 0 auto;">
+          <div class="daily-photo" style="width:280px;height:210px;border-radius:24px;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-sm);overflow:hidden;">
+            <img src="{{ dailyHero.src }}" alt="{{ dailyHero.caption }}" style="width:100%;height:100%;object-fit:contain;display:block;">
+          </div>
+          <div style="font:var(--p-sm);font-weight:700;color:var(--fg-muted);text-align:center;margin-top:10px;">Bird of the Day: {{ dailyHero.name }}</div>
         </div>
       </div>
 
@@ -267,11 +271,9 @@
               <span style="font:var(--h6);">{{ d.name }} call</span>
               <span style="font:var(--caption);color:var(--fg-muted);font-family:var(--font-mono);">{{ d.audioTime }}</span>
             </div>
-            <div style="height:8px;background:var(--neutral-100);border-radius:999px;overflow:hidden;">
-              <div style="{{ d.audioProgress }}"></div>
-            </div>
+            <input class="audio-seek" type="range" min="0" max="1000" value="{{ d.audioSeekValue }}" disabled="{{ d.noAudio }}" onInput="{{ d.onAudioSeek }}" onChange="{{ d.onAudioSeek }}" aria-label="Audio progress" style="{{ d.audioSeekStyle }}">
             <sc-if value="{{ d.hasAudio }}" hint-placeholder-val="{{ false }}">
-              <audio id="{{ d.audioId }}" controls src="{{ d.audioSrc }}" onPlay="{{ d.onAudioPlay }}" onPause="{{ d.onAudioPause }}" onEnded="{{ d.onAudioPause }}" onLoadedMetadata="{{ d.onAudioUpdate }}" onTimeUpdate="{{ d.onAudioUpdate }}" style="width:100%;margin-top:12px;"></audio>
+              <audio id="{{ d.audioId }}" src="{{ d.audioSrc }}" onPlay="{{ d.onAudioPlay }}" onPause="{{ d.onAudioPause }}" onEnded="{{ d.onAudioPause }}" onLoadedMetadata="{{ d.onAudioUpdate }}" onTimeUpdate="{{ d.onAudioUpdate }}" style="display:none;"></audio>
               <div style="font:var(--caption);color:var(--fg-subtle);margin-top:8px;">Recorded by {{ d.recordist }}</div>
             </sc-if>
             <sc-if value="{{ d.noAudio }}" hint-placeholder-val="{{ true }}">
@@ -2637,19 +2639,27 @@ class Component extends DCLogic {
     audioTimes[id] = { current: audio.currentTime || 0, duration: audio.duration };
     this.setState({ audioTimes });
   }
+  seekAudio(id,e){
+    const audio = document.getElementById(`audio-${id}`);
+    if(!audio || !Number.isFinite(audio.duration) || audio.duration <= 0) return;
+    const raw = Number(e && e.target ? e.target.value : 0);
+    audio.currentTime = (Math.max(0, Math.min(1000, raw)) / 1000) * audio.duration;
+    this.syncAudioTime(id);
+  }
   dailyHero(all){
     const photos = all.flatMap(b => (b.photos || []).map(p => ({
       src: p.src,
-      caption: `${b.name}: ${p.caption}`
+      caption: `${b.name}: ${p.caption}`,
+      name: b.name
     })));
-    if(!photos.length) return { src:"", caption:"BirdLearn" };
+    if(!photos.length) return { src:"", caption:"BirdLearn", name:"" };
     const today = new Date();
     const key = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
     const idx = Math.abs((key * 1103515245 + 12345) % photos.length);
     return photos[idx];
   }
 
-  selectAnswer(qi,oi){ if(this.state.answers[qi]!=null) return; this.setState(s=>({ answers:{...s.answers, [qi]:oi} })); }
+  selectAnswer(qi,oi){ if(this.state.finished) return; this.setState(s=>({ answers:{...s.answers, [qi]:oi} })); }
   finishQuiz(bird, quiz){
     const score = quiz.filter((q,qi)=>this.state.answers[qi]===q.a).length;
     const total = quiz.length; const perfect = score===total;
@@ -2724,7 +2734,7 @@ class Component extends DCLogic {
             if(oi===qq.a){ bg="rgba(57,202,142,0.16)"; bd="1.5px solid var(--snap-green)"; mark="✓"; }
             if(oi===sel && sel!==qq.a){ bg="rgba(242,60,87,0.12)"; bd="1.5px solid var(--snap-red)"; mark="✗"; }
           }
-          return { text, mark, liveClass: sel==null?"qopt-live":"", style:`display:flex;align-items:center;justify-content:space-between;gap:12px;background:${bg};border:${bd};border-radius:14px;padding:14px 18px;font:var(--p);`+(sel==null?"":"cursor:default;"), onClick: sel==null?(()=>this.selectAnswer(qi,oi)):(()=>{}) };
+          return { text, mark, liveClass: this.state.finished?"":"qopt-live", style:`display:flex;align-items:center;justify-content:space-between;gap:12px;background:${bg};border:${bd};border-radius:14px;padding:14px 18px;font:var(--p);`+(this.state.finished?"cursor:default;":"cursor:pointer;"), onClick: this.state.finished?(()=>{}):(()=>this.selectAnswer(qi,oi)) };
         });
         return { q:qq.q, numLabel:`Q${qi+1}.`, opts };
       });
@@ -2757,12 +2767,14 @@ class Component extends DCLogic {
         onAudioPlay:()=>{ this.startAudioClock(bird.id); this.setState({playing:true}); },
         onAudioPause:()=>{ this.stopAudioClock(); this.syncAudioTime(bird.id); this.setState({playing:false}); },
         onAudioUpdate:()=>this.syncAudioTime(bird.id),
-        playIcon: playing?"pause":"play", audioTime: this.audioLabel(bird.id),
-        audioProgress:`height:100%;background:var(--snap-yellow);border-radius:999px;width:${this.audioPercent(bird.id)}%;transition:width 0.25s linear;`,
+        playIcon:"play", audioTime: this.audioLabel(bird.id),
+        audioSeekValue: Math.round(this.audioPercent(bird.id) * 10),
+        audioSeekStyle:`background:linear-gradient(90deg,var(--snap-yellow) 0%,var(--snap-yellow) ${this.audioPercent(bird.id)}%,var(--neutral-100) ${this.audioPercent(bird.id)}%,var(--neutral-100) 100%);`,
         hasAudio: !!bird.audio, noAudio: !bird.audio,
         audioId: `audio-${bird.id}`,
         audioSrc: bird.audio ? bird.audio.src : "",
         recordist: bird.audio ? bird.audio.recordist : "",
+        onAudioSeek:(e)=>this.seekAudio(bird.id,e),
         quiz:{ questions, progressText:`${answeredCount} of ${quiz.length} answered`, showFinish: allAnswered && !this.state.finished,
           onFinish:()=>this.finishQuiz(bird,quiz), finished:this.state.finished, onRetry:()=>this.retryQuiz(),
           resultStyle, resultTitle, resultText },
