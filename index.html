@@ -2767,7 +2767,7 @@ class Component extends DCLogic {
         onAudioPlay:()=>{ this.startAudioClock(bird.id); this.setState({playing:true}); },
         onAudioPause:()=>{ this.stopAudioClock(); this.syncAudioTime(bird.id); this.setState({playing:false}); },
         onAudioUpdate:()=>this.syncAudioTime(bird.id),
-        playIcon:"play", audioTime: this.audioLabel(bird.id),
+        playIcon: playing?"play":"pause", audioTime: this.audioLabel(bird.id),
         audioSeekValue: Math.round(this.audioPercent(bird.id) * 10),
         audioSeekStyle:`background:linear-gradient(90deg,var(--snap-yellow) 0%,var(--snap-yellow) ${this.audioPercent(bird.id)}%,var(--neutral-100) ${this.audioPercent(bird.id)}%,var(--neutral-100) 100%);`,
         hasAudio: !!bird.audio, noAudio: !bird.audio,
