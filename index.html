@@ -85,7 +85,7 @@
             <input value="{{ query }}" onInput="{{ onQuery }}" placeholder="Search by name…" style="border:0;outline:0;background:transparent;font:var(--p);flex:1;color:var(--fg);"/>
           </div>
         </div>
-        <div class="float" style="width:230px;height:180px;border-radius:24px;background:#fff;display:flex;align-items:center;justify-content:center;flex:0 0 auto;box-shadow:var(--shadow-sm);overflow:hidden;">
+        <div style="width:280px;height:210px;border-radius:24px;background:#fff;display:flex;align-items:center;justify-content:center;flex:0 0 auto;box-shadow:var(--shadow-sm);overflow:hidden;">
           <img src="{{ dailyHero.src }}" alt="{{ dailyHero.caption }}" style="width:100%;height:100%;object-fit:contain;display:block;">
         </div>
       </div>
@@ -2540,6 +2540,11 @@ class Component extends DCLogic {
     const t = (this.state.audioTimes && this.state.audioTimes[id]) || { current:0, duration:NaN };
     return `${this.formatTime(t.current)} / ${this.formatTime(t.duration)}`;
   }
+  audioPercent(id){
+    const t = (this.state.audioTimes && this.state.audioTimes[id]) || { current:0, duration:NaN };
+    if(!Number.isFinite(t.duration) || t.duration <= 0) return 0;
+    return Math.max(0, Math.min(100, (t.current / t.duration) * 100));
+  }
   syncAudioTime(id){
     const audio = document.getElementById(`audio-${id}`);
     if(!audio) return;
@@ -2667,7 +2672,7 @@ class Component extends DCLogic {
         onAudioPause:()=>{ this.stopAudioClock(); this.syncAudioTime(bird.id); this.setState({playing:false}); },
         onAudioUpdate:()=>this.syncAudioTime(bird.id),
         playIcon: playing?"pause":"play", audioTime: this.audioLabel(bird.id),
-        audioProgress:`height:100%;background:var(--snap-yellow);border-radius:999px;width:${playing?100:0}%;transition:width ${playing?"12s linear":"0.3s var(--ease-out)"};`,
+        audioProgress:`height:100%;background:var(--snap-yellow);border-radius:999px;width:${this.audioPercent(bird.id)}%;transition:width 0.25s linear;`,
         hasAudio: !!bird.audio, noAudio: !bird.audio,
         audioId: `audio-${bird.id}`,
         audioSrc: bird.audio ? bird.audio.src : "",
