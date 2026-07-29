@@ -19,8 +19,8 @@
     --snap-pale-yellow: #edfbea;
     --snap-green: #57b782;
     --snap-blue: #6bb8df;
-    --snap-off-white: #f7fcf8;
-    --bg: #f7fcf8;
+    --snap-off-white: #fbfff9;
+    --bg: #fbfff9;
     --bg-elev: #ffffff;
     --neutral-50: #f7fcf8;
     --neutral-100: #e8f4ee;
@@ -66,6 +66,7 @@
   .about-note { margin-bottom:44px; }
   .special-thanks { margin:0 0 44px; padding:28px 0; border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
   .author-section { display:flex; gap:36px; flex-wrap:wrap; align-items:flex-start; }
+  .mobile-author-title { display:none; }
   .author-photo-wrap { flex:0 0 min(44vw, 460px); }
   .author-photo { width:100%; aspect-ratio:1 / 1; border-radius:24px; overflow:hidden; box-shadow:var(--shadow-sm); background:#fff; }
   .author-copy { flex:1 1 420px; min-width:300px; }
@@ -83,7 +84,11 @@
     .info-grid { grid-template-columns:1fr !important; }
     .photo-grid { grid-template-columns:1fr !important; }
     .about-shell { padding-left:16px !important; padding-right:16px !important; }
+    .mobile-author-title { display:block !important; flex:1 1 100%; order:0; }
+    .desktop-author-title { display:none !important; }
     .author-photo-wrap { flex-basis:100% !important; }
+    .author-photo-wrap { order:1; }
+    .author-copy { order:2; }
     .author-copy { min-width:0 !important; }
     .detail-hero > div, .article-wrap > div { min-width:0 !important; }
   }
@@ -108,7 +113,7 @@
 </style>
 </helmet>
 
-  <div style="min-height:100vh;background:linear-gradient(180deg,#f7fcf8 0%,#eef9f4 46%,#ffffff 100%);font-family:var(--font-body);">
+  <div style="min-height:100vh;background:linear-gradient(180deg,#fbfff9 0%,#f7fff4 48%,#ffffff 100%);font-family:var(--font-body);">
 
   <!-- ============ NAV ============ -->
   <div style="position:sticky;top:0;z-index:50;background:rgba(247,252,248,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);">
@@ -424,20 +429,21 @@
 
       <div class="special-thanks" style="margin:0 0 44px;padding:28px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
         <h3 style="margin-bottom:14px;">Special Thanks</h3>
-        <p style="font:var(--p-lg);margin-bottom:16px;">I would like to shout out the San Francisco Bird Observatory. Your annual Kids Art Contest truly inspired me to learn more about birds. Through the research and drawing I did for the competition, I learned what birds were going through, and how to fix it. My hope is for this website to inspire others the same way your event inspired me.</p>
+        <p style="font:var(--p-lg);margin-bottom:16px;">I would like to shout out the San Franscico Bird Observatory. Your annual Kids Art Contest truly inspired me to learn more about birds. Through the research and drawing I did for the competition, I learned what birds were going through, and how to fix it. My hopes is website to inspire others the same way your event inspired me.</p>
         <p style="font:var(--p-lg);margin-bottom:16px;">I am also thankful for the Santa Clara Valley Bird Alliance. Participating in your guided birding trips brought me to see so many new species and learn more about every one of them. You taught me how to appreciate birds through your educational program.</p>
-        <p style="font:var(--p-lg);margin-bottom:16px;">A special piece of gratitude goes to my writing teacher for helping me improve my essays. Thank you for your time and effort spent helping me bring these articles to life.</p>
-        <p style="font:var(--p-lg);margin:0;">Lastly, and most importantly, I would like to send a huge thanks to my family. You all supported me in my passion for birds. You made this all possible. Through your love, guidance, and support, I was able to create this website. Mom and Dad, you were the ones to teach me, to give me feedback, and to work through the many iterations it took. Izzy, you may be annoying sometimes, but for a 3 year old, you’re an amazing sister. And to Grandma and Grandpa, you don’t know English very well yet, but your love is all I need.</p>
+        <p style="font:var(--p-lg);margin-bottom:16px;">A special piece of graditude goes to Dr. Hu, my writing teacher, for helping me improve my essays. Thank you for your time and effort spent helping me bring these aritcles to life.</p>
+        <p style="font:var(--p-lg);margin:0;">Lastly, and most importantly, I would like to send a huge thanks to my family. You all supported me in my passion for birds. You made this all possible. Through your love, guidence, and support, I was able to create this website. Mom and Dad, you were the ones to teach me, to give me feedback, and to render through the many iterations it took. Izzy, you may be annoying sometimes, but for a 3 year old, your an amazing sister. And to Grandma and Grandpa, you don't know English very well yet, but your love is all I need.</p>
       </div>
 
       <div class="author-section" style="display:flex;gap:36px;flex-wrap:wrap;align-items:flex-start;">
+        <h3 class="mobile-author-title" style="margin-bottom:0;">About the Author</h3>
         <div class="author-photo-wrap" style="flex:0 0 min(44vw,460px);">
           <div class="author-photo" style="width:100%;aspect-ratio:1 / 1;border-radius:24px;overflow:hidden;box-shadow:var(--shadow-sm);background:#fff;">
             <img src="assets/about/author.jpg" alt="Olivia Chen" style="width:100%;height:100%;object-fit:contain;display:block;">
           </div>
         </div>
         <div class="author-copy" style="flex:1 1 420px;min-width:300px;">
-          <h3 style="margin-bottom:12px;">About the Author</h3>
+          <h3 class="desktop-author-title" style="margin-bottom:12px;">About the Author</h3>
           <p style="font:var(--p-lg);margin-bottom:20px;">Olivia Chen is a 10 year old 5th grader who goes to Pinewood School. She lives in Los Altos, CA with her younger sister, Izzy, her mother, father, and grandma. Olivia has enjoyed writing since she was 5 years old. She published her first book, called <em>Olivia’s Fantasy Wonderland</em>, at the age of 7. It’s a collection of fictional stories where her imagination meets the pages of the book. Her hobbies are reading, writing, drawing, swimming, and playing cello. She also enjoys traveling with her family. She loves looking for wildlife, especially birds. Through this website, Olivia hopes to inspire children around her age to care for birds and be aware of what they are doing to the environment.</p>
           <blockquote style="font:var(--h3);margin:0 0 20px;padding:18px 22px;border-left:5px solid var(--snap-yellow);background:#fff;border-radius:16px;box-shadow:var(--shadow-xs);">
             “I want kids to learn how to appreciate nature<br>
