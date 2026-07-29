@@ -138,7 +138,7 @@
           </div>
         </div>
         <div style="flex:0 0 auto;">
-          <div class="daily-photo" style="width:280px;height:210px;border-radius:24px;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-sm);overflow:hidden;">
+          <div class="daily-photo btn" onClick="{{ dailyHero.onOpen }}" style="width:280px;height:210px;border-radius:24px;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-sm);overflow:hidden;cursor:pointer;">
             <img src="{{ dailyHero.src }}" alt="{{ dailyHero.caption }}" style="width:100%;height:100%;object-fit:contain;display:block;">
           </div>
           <div style="font:var(--p-sm);font-weight:700;color:var(--fg-muted);text-align:center;margin-top:10px;">Bird of the Day: {{ dailyHero.name }}</div>
@@ -2671,9 +2671,10 @@ class Component extends DCLogic {
     const photos = all.flatMap(b => (b.photos || []).map(p => ({
       src: p.src,
       caption: `${b.name}: ${p.caption}`,
-      name: b.name
+      name: b.name,
+      birdId: b.id
     })));
-    if(!photos.length) return { src:"", caption:"BirdLearn", name:"" };
+    if(!photos.length) return { src:"", caption:"BirdLearn", name:"", birdId:null };
     const today = new Date();
     const key = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
     const idx = Math.abs((key * 1103515245 + 12345) % photos.length);
@@ -2819,6 +2820,7 @@ class Component extends DCLogic {
 
     const celebrateBadges = (this.state.celebrate||[]).map(c=>({ name:c.name, icon:c.icon, req:c.req, circleStyle:c.circleStyle }));
     const lightbox = this.lightboxPhoto();
+    dailyHero.onOpen = dailyHero.birdId==null ? (()=>{}) : (()=>this.openBird(dailyHero.birdId));
 
     return {
       siteName, showFunFacts, navItems, dailyHero,
